@@ -1,0 +1,14 @@
+Source: nautilus-follow-symlink
+Section: contrib/gnome
+Priority: extra
+Maintainer: Toni Corvera <outlyer@outlyer.net>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.2
+
+Package: nautilus-follow-symlink
+Architecture: any
+Build-Depends: gcc, libtool, pkg-config, libc6-dev, libglib2.0-dev, libnautilus-extension-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, nautilus
+Description: nautilus plugin to open the location pointed by a symlink
+ This extension adds a context menu option to symbolic links to
+ folders which opens the pointed folder instead of the symbolic link.

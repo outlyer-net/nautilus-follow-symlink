@@ -1,0 +1,8 @@
+0.5.1:
+	* BUGFIX: Correctly check error in realpath() call
+	* INTERNAL: Rearrangement in multiple files, applied static where
+	appropiate
+	* INTERNAL: Added extra-verbosity, switchable on compile time
+
+0.5 (22 oct 2006):
+	* Initial release

@@ -1,10 +1,5 @@
 #include "nautilus-ext-follow-symlink.h"
 
-#include <locale.h>
-#include <libintl.h>
-
-#include <glib/gprintf.h>
-
 /* Public interface */
 static GType fsl_type;
 static GType provider_types[1];

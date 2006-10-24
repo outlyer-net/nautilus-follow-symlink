@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-24 19:07+0200\n"
+"POT-Creation-Date: 2006-10-24 21:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,10 +16,18 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/follow-symlink.c:135
+#: ../src/follow-symlink.c:156
 msgid "Follow symbolic _link"
 msgstr ""
 
-#: ../src/follow-symlink.c:136
+#: ../src/follow-symlink.c:157
 msgid "Open the directory pointed by the currently selected symbolic link"
+msgstr ""
+
+#: ../src/follow-symlink.c:160
+msgid "Open real path"
+msgstr ""
+
+#: ../src/follow-symlink.c:161
+msgid "Open the real path of the folder pointed by this symbolic link"
 msgstr ""

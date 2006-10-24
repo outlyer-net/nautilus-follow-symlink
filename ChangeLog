@@ -2,7 +2,12 @@ Iterim milestones
 These private versions, the version numbering bumps just denote
 that a development milestone is achieved
 
-0.6.0:
+0.7.0 (24 oct 2006):
+	* Added support for background items (context menu on opened symlinks)
+	* BUGFIX: Corrected translation typos
+	* BUGFIX: Corrected includes only working in DEBUG/NON-DEBUG mode
+
+0.6.0 (24 oct 2006):
 	* Added support for i18n, updated build-dependancies accordingly
 
 0.5.2 (24 oct 2006):

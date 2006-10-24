@@ -9,6 +9,9 @@
 #include <glib/gmessages.h> /* g_print() */
 #include <glib/gprintf.h>   /* g_printf() */
 
+#include <stdlib.h> /* getenv() (3) */
+#include <string.h> /* strcmp() (3) */
+
 #include "libintl.h"
 #define _(STR) gettext(STR)
 
@@ -16,10 +19,12 @@
     #include "config.h"
 #endif // HAVE_CONFIG_H
 
+#ifndef __inline__
+    #define __inline
+#endif
+
 #ifdef _DEBUG
-/* Debugging facilities */
-    #include <stdlib.h> /* getenv() (3) */
-    #include <string.h> /* strcmp() (3) */
+    /* Debugging facilities */
 
     /* Prefix for messages */
     #define FSL_                  "nautilus-follow-symlink: "

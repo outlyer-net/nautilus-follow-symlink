@@ -1,4 +1,7 @@
 
+# Required to correctly install the locale files
+CPPFLAGS+=-DGNOMELOCALEDIR=\""$(datadir)/locale"\"
+
 nautilus_extension_lib_LTLIBRARIES = libnautilus-follow-symlink.la
 
 # Must be installed in nautilus' extension dir

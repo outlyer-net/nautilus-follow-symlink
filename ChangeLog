@@ -1,6 +1,11 @@
-Iterim milestones:
+Iterim milestones
+These private versions, the version numbering bumps just denote
+that a development milestone is achieved
 
-0.5.2:
+0.6.0:
+	* Added support for i18n, updated build-dependancies accordingly
+
+0.5.2 (24 oct 2006):
 	* INTERNAL: Corrected includes and function declarations
 	* INTERNAL: Switched to the autotools build system
 	* BUGFIX: Retrieve libnautilus-extension's directory for installation

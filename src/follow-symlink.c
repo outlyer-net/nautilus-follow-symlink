@@ -1,22 +1,73 @@
 #include "follow-symlink.h"
 
-#include <glib/gprintf.h>
-#include <sys/stat.h>
-#include <errno.h>  /* errno (3) */
-#include <stdlib.h> /* realpath() (3) */
-#include <string.h> /* strlen(), strerror() (3) */
-
 // Offset at char 7 to remove file://
 static const unsigned short URI_OFFSET = 7 * sizeof(gchar);
 static const size_t PATH_LENGTH_BYTES = sizeof(gchar) * (PATH_MAX + 1);
+
+extern int errno;
 
 /* Menu initialization */
 void fsl_extension_menu_provider_iface_init(NautilusMenuProviderIface *iface)
 {
     TRACE();
 
-    //TODO: iface->get_background_items = fsl_get_background_items;
     iface->get_file_items = fsl_get_file_items;
+    iface->get_background_items = fsl_get_background_items;
+}
+
+/* Implementation of the menu attachment,
+ * this is slightly different whith file items and with background (one folder)
+ * items, but shares most of the code, so the common part is here.
+ */
+GList * fsl_get_items_impl(GtkWidget * window,
+                           NautilusFileInfo * file_info,
+                           gboolean is_file_item)
+{
+    TRACE();
+
+    NautilusMenuItem *item;
+
+    // Only file uris
+    {
+        gchar * uri_scheme = nautilus_file_info_get_uri_scheme(file_info);
+        if (strcmp(uri_scheme, "file") != 0) {
+            FSL_LOG( "Not file scheme" );
+            return NULL;
+        }
+        g_free(uri_scheme);
+    }
+
+    // We know the file is either a directory or a symlink to a directory
+    // TODO: Has glib/gnome any better/faster alternatives?
+    {
+        struct stat file_stat;
+        // Note ..._get_name doesn't give the full path
+        const gchar * const file_name = nautilus_file_info_get_uri(file_info) + URI_OFFSET;
+        lstat(file_name, &file_stat);
+        if (! S_ISLNK(file_stat.st_mode)) {
+            FSL_LOG1( "Not S_ISLNK:", file_name );
+            return NULL;
+        }
+    }
+
+    item = fsl_menu_item_new(gtk_widget_get_screen(window), is_file_item);
+    g_signal_connect(item, "activate", G_CALLBACK(fsl_callback),
+                     file_info);
+
+    return g_list_append(NULL, item);
+}
+
+GList *
+fsl_get_background_items(NautilusMenuProvider * provider,
+                         GtkWidget * window,
+                         NautilusFileInfo * current_folder)
+{
+    TRACE();
+
+    if (NULL == current_folder) { // XXX: Does this ever happen?
+        FSL_LOG( "No folder selected" );
+     }
+    return fsl_get_items_impl(window, current_folder, FALSE);
 }
 
 /* Bind to menu if needed */
@@ -27,8 +78,6 @@ fsl_get_file_items (NautilusMenuProvider * provider,
 {
     TRACE();
 
-    NautilusMenuItem *item;
-
     // Number of files = g_list_length(files)
     // Directory = nautilus_file_info_is_directory(files->data)
 
@@ -37,47 +86,18 @@ fsl_get_file_items (NautilusMenuProvider * provider,
         return NULL;
     }
 
-    // Only file uris
-    {
-        gchar * uri_scheme = nautilus_file_info_get_uri_scheme(files->data);
-        if (strcmp(uri_scheme, "file") != 0) {
-            FSL_LOG( "Not file scheme" );
-            return NULL;
-        }
-        g_free(uri_scheme);
-    }
-
-    // Xref: http://www.koders.com/c/fidA0AA0A78334E1FA3D668FD10B437638F6D031D77.aspx?s=NautilusFile
     GnomeVFSFileInfo * gfi = nautilus_file_info_get_vfs_file_info(files->data);
     /*
-     * Xref: /usr/include/gnome-vfs-2.0/libgnomevfs/gnome-vfs-file-info.h
-     *
      * Aparently type is never GNOME_VFS_FILE_TYPE_SYMBOLIC_LINK and symlinks
      * are resolved to the target type
      */
-    /*if (gfi->type != GNOME_VFS_FILE_TYPE_SYMBOLIC_LINK) {*/
     if (gfi->type != GNOME_VFS_FILE_TYPE_DIRECTORY) {
         FSL_LOG( "Not directory" );
         return NULL;
     }
-    // We know the file is either a directory or a symlink to a directory
-    // TODO: Has glib/gnome any better/faster alternatives?
-    {
-        struct stat file_info;
-        // Note ..._get_name doesn't give the full path
-        const gchar * const file_name = nautilus_file_info_get_uri(files->data) + URI_OFFSET;
-        lstat(file_name, &file_info);
-        if (! S_ISLNK(file_info.st_mode)) {
-            FSL_LOG1( "Not S_ISLNK:", file_name );
-            return NULL;
-        }
-    }
 
-    item = fsl_menu_item_new(gtk_widget_get_screen(window), TRUE);
-    g_signal_connect(item, "activate", G_CALLBACK(fsl_callback),
-                     files->data);
 
-    return g_list_append(NULL, item);
+    return fsl_get_items_impl(window, files->data, TRUE);
 }
 
 void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
@@ -132,8 +152,14 @@ fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item)
     const char *name;
     const char *tooltip;
 
-    name = _("Follow symbolic _link");
-    tooltip = _("Open the directory pointed by the currently selected symbolic link");
+    if (is_file_item) {
+        name = _("Follow symbolic _link");
+        tooltip = _("Open the directory pointed by the currently selected symbolic link");
+    }
+    else {
+        name = _("Open real path");
+        tooltip = _("Open the real path of the folder pointed by this symbolic link");
+    }
 
     // (name, label, tip, icon)
     ret = nautilus_menu_item_new("FsymlinkExtension::follow_symlink",

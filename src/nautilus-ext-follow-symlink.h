@@ -1,10 +1,15 @@
 #ifndef NAUTILUS_EXT_FOLLOW_SYMLINK_H
 #define NAUTILUS_EXT_FOLLOW_SYMLINK_H
 
+#include "common.h"
+
 #include <glib-object.h>
 #include <libnautilus-extension/nautilus-menu-provider.h>
 
-#include "common.h"
+#include <locale.h>
+#include <libintl.h>
+
+#include <glib/gprintf.h>
 
 /*
  * This file contains nautilus-follow-symlink's "public" interface,
@@ -45,5 +50,5 @@ static void fsl_instance_init (FsymlinkExtension *cvs);
 /* Defined in the private interface */
 extern void fsl_extension_menu_provider_iface_init(NautilusMenuProviderIface *iface);
 
-#endif /* NAUTILUS_MODULE_FOLLOW_SYMLINK_H */
+#endif /* NAUTILUS_EXT_FOLLOW_SYMLINK_H */
 /* vim:set ts=4 et ai: */

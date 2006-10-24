@@ -1,3 +1,10 @@
+nautilus-follow-symlink (0.5.2-out.2) unstable; urgency=low
+
+  * debian/rules: Install upstream ChangeLog
+  * debian/docs: Install upstream BUILD instructions
+
+ -- Toni Corvera <outlyer@outlyer.net>  Tue, 24 Oct 2006 18:32:54 +0200
+
 nautilus-follow-symlink (0.5.2-out.1) unstable; urgency=low
 
   * New upstream release

@@ -1,0 +1,38 @@
+
+AC_INIT(src/follow-symlink.c)
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.5.2")
+AC_CONFIG_HEADER(src/config.h)
+
+dnl default FLAGS
+CPPFLAGS="$CPPFLAGS -std=gnu99 -pedantic-errors -Wall"
+CFLAGS="$CFLAGS -O -Wall -Werror"
+LDFLAGS="$LDFLAGS -Wl,--as-needed"
+
+# libtool
+AM_PROG_LIBTOOL
+AM_DISABLE_STATIC
+
+AC_PROG_INSTALL
+AC_LANG_C
+AC_PROG_CC
+
+# string.h and stdlib.h are used
+dnl defines STDC_HEADERS if ANSI-compliant headers are present
+AC_HEADER_STDC
+dnl Xref: http://www.seul.org/docs/autotut/#libtool
+AC_CHECK_HEADERS(sys/stat.h,,AC_MSG_ERROR([required header file missing]))
+
+# glib-2.0: ensure it's present
+dnl and set GLIB_CFLAGS and GLIB_LIBS
+AM_PATH_GLIB_2_0
+
+# pkg-config: ensure libnautilus-extension is found by pkg-config
+PKG_CHECK_MODULES(NAUTILUS_EXTENSION, [libnautilus-extension])
+
+#AC_DEFINE(_GNU_SOURCE)
+
+dnl Incorporate the result of tests
+CFLAGS="$CFLAGS $GLIB_CFLAGS $NAUTILUS_EXTENSION_CFLAGS"
+LIBS="$LIBS $GLIB_LIBS $NAUTILUS_EXTENSION_LIBS"
+
+AC_OUTPUT(Makefile src/Makefile)

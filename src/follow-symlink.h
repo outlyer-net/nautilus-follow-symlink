@@ -7,17 +7,10 @@
  */
 
 #include <libnautilus-extension/nautilus-menu-provider.h>
-#include <sys/stat.h>
-#include <stdlib.h> /* realpath() */
-#include <string.h> /* strlen() */
 
 #include "common.h"
 
 /* Static Prototypes */
-
-static GType fsl_get_type(void);
-
-static void fsl_register_type(GTypeModule *);
 
 static void fsl_callback(NautilusMenuItem *, NautilusFileInfo *);
 

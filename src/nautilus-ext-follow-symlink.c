@@ -1,5 +1,7 @@
 #include "nautilus-ext-follow-symlink.h"
 
+#include <glib/gprintf.h>
+
 /* Public interface */
 static GType fsl_type;
 static GType provider_types[1];
@@ -7,6 +9,7 @@ static GType provider_types[1];
 void nautilus_module_initialize (GTypeModule  *module)
 {
     TRACE();
+    FSL_DEBUG_INIT();
 
     g_printf("Initializing nautilus-follow-symlink extension (v.%s)\n", VERSION);
 
@@ -70,12 +73,12 @@ GType fsl_get_type(void)
     return fsl_type;
 }
 
-static void fsl_instance_init(FsymlinkExtension *cvs)
+void fsl_instance_init(FsymlinkExtension *cvs)
 {
     TRACE();
 }
 
-static void fsl_class_init(FsymlinkExtensionClass *class)
+void fsl_class_init(FsymlinkExtensionClass *class)
 {
     TRACE();
 }

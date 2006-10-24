@@ -26,7 +26,7 @@ static GList * fsl_get_background_items(NautilusMenuProvider *, GtkWidget *, Nau
 
 static GList * fsl_get_items_impl(GtkWidget *, NautilusFileInfo *, gboolean);
 
-static NautilusMenuItem * fsl_menu_item_new(GdkScreen *, gboolean);
+static NautilusMenuItem * fsl_menu_item_new(GdkScreen *, gboolean, const gchar *);
 
 /* Exported Prototypes
  * Here the namespace is a bit more explicit just in case

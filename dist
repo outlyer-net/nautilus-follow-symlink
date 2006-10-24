@@ -28,6 +28,7 @@ clean:
 	rm -f aclocal.m4
 	rm -f configure Makefile Makefile.in src/Makefile src/Makefile.in
 	rm -f po/*.gmo po/Makefile po/Makefile.in po/POTFILES
+	find . -name 'stamp-??' -exec rm {} \;
 	# The following are moved thanks to Makefile.am (var DISTCLEANFILES)
 	# (kept for situations in which make distclean fails)
 	# Undo libtoolize

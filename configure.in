@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.7.0")
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.7.9")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS

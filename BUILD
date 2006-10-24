@@ -6,11 +6,12 @@ COMPILATION
 	$ ./dist
 
 * Configure
-	$ ./configure
+	$ ./configure --prefix=/usr
 
-	Note that this being a nautilus extension, the --prefix is not really needed
-	as there's no real flexibility on where to install them. The appropiate place
-	will be checked on install time.
+	Note that this being a nautilus extension, the --prefix is not really used
+	at installation time as there's no real flexibility on where to install them
+	(the appropiate place will be checked on install time). BUT it should match
+	gnome's locale dir.
 
 * Compile
 	$ make

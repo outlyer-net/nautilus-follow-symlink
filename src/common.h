@@ -9,6 +9,9 @@
 #include <glib/gmessages.h> /* g_print() */
 #include <glib/gprintf.h>   /* g_printf() */
 
+#include "libintl.h"
+#define _(STR) gettext(STR)
+
 #ifdef HAVE_CONFIG_H
     #include "config.h"
 #endif // HAVE_CONFIG_H

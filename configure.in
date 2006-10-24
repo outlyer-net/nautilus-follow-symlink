@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.5.2")
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.6.0")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
@@ -15,6 +15,14 @@ AM_DISABLE_STATIC
 AC_PROG_INSTALL
 AC_LANG_C
 AC_PROG_CC
+
+# intltool
+AC_PROG_INTLTOOL(0.18)
+GETTEXT_PACKAGE=nautilus-follow-symlink
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [gettext domain])
+ALL_LINGUAS="ca es" dnl Implied en
+AM_GLIB_GNU_GETTEXT
 
 # string.h and stdlib.h are used
 dnl defines STDC_HEADERS if ANSI-compliant headers are present
@@ -35,4 +43,7 @@ dnl Incorporate the result of tests
 CFLAGS="$CFLAGS $GLIB_CFLAGS $NAUTILUS_EXTENSION_CFLAGS"
 LIBS="$LIBS $GLIB_LIBS $NAUTILUS_EXTENSION_LIBS"
 
-AC_OUTPUT(Makefile src/Makefile)
+AC_OUTPUT([Makefile
+  src/Makefile
+  po/Makefile.in
+])

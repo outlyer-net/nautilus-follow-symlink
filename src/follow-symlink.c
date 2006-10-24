@@ -132,8 +132,8 @@ fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item)
     const char *name;
     const char *tooltip;
 
-    name = "-> Follow symbolic _link";
-    tooltip = "Open the directory pointed by the currently selected symbolic link";
+    name = _("Follow symbolic _link");
+    tooltip = _("Open the directory pointed by the currently selected symbolic link");
 
     // (name, label, tip, icon)
     ret = nautilus_menu_item_new("FsymlinkExtension::follow_symlink",

@@ -1,5 +1,8 @@
 #include "nautilus-ext-follow-symlink.h"
 
+#include <locale.h>
+#include <libintl.h>
+
 #include <glib/gprintf.h>
 
 /* Public interface */
@@ -10,6 +13,10 @@ void nautilus_module_initialize (GTypeModule  *module)
 {
     TRACE();
     FSL_DEBUG_INIT();
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(GETTEXT_PACKAGE, GNOMELOCALEDIR);
+    textdomain(GETTEXT_PACKAGE);
 
     g_printf("Initializing nautilus-follow-symlink extension (v.%s)\n", VERSION);
 

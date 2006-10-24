@@ -10,6 +10,7 @@ dist: gen
 
 gen:
 	libtoolize
+	intltoolize
 	aclocal -I .
 	autoconf
 	autoheader
@@ -26,5 +27,10 @@ clean:
 	rm -f config.* depcomp install-sh missing src/config.h src/config.h.in
 	rm -f aclocal.m4
 	rm -f configure Makefile Makefile.in src/Makefile src/Makefile.in
+	# The following are moved thanks to Makefile.am (var DISTCLEANFILES)
+	# (kept for situations in which make distclean fails)
 	# Undo libtoolize
 	rm -f libtool.m4 lt*.m4 ltmain.sh libtool
+	# Undo intltoolize
+	rm -f intltool*
+	rm -f po/Makefile.in.in

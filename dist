@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+
+dist: gen
+
+# aclocal won't find libtool's m4, at least in debian, unless an
+# extra include path is given, with libtoolize it is "." while
+# whitout it is /usr/share/libtool/m4, altough it will fail
+# on finding ltmain.sh
+
+gen:
+	libtoolize
+	aclocal -I .
+	autoconf
+	autoheader
+	automake --add-missing --foreign
+
+regen: clean gen
+
+clean:
+	make distclean || true
+	make clean || true
+	cd src && make clean || true
+	#
+	rm -rf autom4te.cache
+	rm -f config.* depcomp install-sh missing src/config.h src/config.h.in
+	rm -f aclocal.m4
+	rm -f configure Makefile Makefile.in src/Makefile src/Makefile.in
+	# Undo libtoolize
+	rm -f libtool.m4 lt*.m4 ltmain.sh libtool

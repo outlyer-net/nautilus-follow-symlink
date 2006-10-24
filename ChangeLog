@@ -1,4 +1,13 @@
-0.5.1:
+Iterim milestones:
+
+0.5.2:
+	* INTERNAL: Corrected includes and function declarations
+	* INTERNAL: Switched to the autotools build system
+	* BUGFIX: Retrieve libnautilus-extension's directory for installation
+	* BUGFIX: Fixed mistakenly using relative paths for link resolution
+	* BUGFIX: Fixed incorrect memory allocation (crashed nautilus sometimes)
+
+0.5.1 (23 oct 2006):
 	* BUGFIX: Correctly check error in realpath() call
 	* INTERNAL: Rearrangement in multiple files, applied static where
 	appropiate

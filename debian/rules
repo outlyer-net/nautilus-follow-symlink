@@ -24,6 +24,8 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
+	test -f configure || ./dist clean gen
+	./configure --prefix=/usr --disable-static
 
 	touch configure-stamp
 
@@ -34,7 +36,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	cd src && $(MAKE) FINAL=1
+	$(MAKE) FINAL=1
 	#docbook-to-man debian/nautilus-follow-symlink.sgml > nautilus-follow-symlink.1
 
 	touch build-stamp
@@ -45,7 +47,7 @@ clean:
 	rm -f build-stamp configure-stamp
 
 	# Add here commands to clean up after the build process.
-	-cd src && $(MAKE) clean
+	-$(MAKE) clean
 
 	dh_clean 
 
@@ -56,7 +58,9 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/nautilus-follow-symlink.
-	cd src && $(MAKE) install DESTDIR=$(CURDIR)/debian/nautilus-follow-symlink
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/nautilus-follow-symlink
+	# There's really no need for the .la file
+	rm -f $(CURDIR)/debian/nautilus-follow-symlink/`pkg-config --variable=extensiondir libnautilus-extension`/*.la
 
 
 # Build architecture-independent files here.

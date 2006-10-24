@@ -50,7 +50,9 @@ GList * fsl_get_items_impl(GtkWidget * window,
         }
     }
 
-    item = fsl_menu_item_new(gtk_widget_get_screen(window), is_file_item);
+    item = fsl_menu_item_new(gtk_widget_get_screen(window),
+                             is_file_item,
+                             nautilus_file_info_get_name(file_info));
     g_signal_connect(item, "activate", G_CALLBACK(fsl_callback),
                      file_info);
 
@@ -117,14 +119,9 @@ void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
         g_assert( FALSE );
     }
 
-    const gchar const * BASE_CMD = "nautilus --no-desktop --no-default-window \"";
-    gchar * command_line = g_malloc( sizeof(gchar) * ( strlen(BASE_CMD) + strlen(target) + 2 ) );
-
-    gchar * offset = g_stpcpy(command_line, BASE_CMD);
-    //offset = g_stpcpy(offset, "file://"); // unneeded; also makes nautilus think it may be incorrect
-    //                                         if it contains spaces (instead of %20's)
-    offset = g_stpcpy(offset, target);
-    g_stpcpy(offset, "\"");
+    const gchar const * BASE_CMD = "nautilus --no-desktop --no-default-window '%s'";
+    gchar * command_line = g_malloc( sizeof(gchar) * ( strlen(BASE_CMD) + strlen(target) + 1 ) );
+    g_sprintf(command_line, BASE_CMD, target);
 
     if (FALSE == g_shell_parse_argv(command_line, NULL, &argv, NULL)) {
         g_assert( FALSE );
@@ -144,26 +141,42 @@ void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
 
 /* Create the new menu item */
 NautilusMenuItem *
-fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item)
+fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item, const gchar * base_name)
 {
     TRACE();
 
     NautilusMenuItem *ret;
-    const char *name;
-    const char *tooltip;
+
+    char * name;
+    char * tooltip;
 
     if (is_file_item) {
-        name = _("Follow symbolic _link");
-        tooltip = _("Open the directory pointed by the currently selected symbolic link");
+        const gchar * fmt_name = _("Follow symbolic _link '%s'");
+        const gchar * fmt_tooltip = _("Open the directory pointed by the "
+                                      "symbolic link '%s'");
+
+        name = g_malloc(sizeof(gchar) * (strlen(fmt_name) + strlen(base_name)));
+        tooltip = g_malloc(sizeof(gchar) * (strlen(fmt_tooltip) + strlen(base_name)));
+        g_sprintf(name, fmt_name, base_name);
+        g_sprintf(tooltip, fmt_tooltip, base_name);
     }
     else {
-        name = _("Open real path");
-        tooltip = _("Open the real path of the folder pointed by this symbolic link");
+        const gchar * fmt_name = _("Open real path of '%s'");
+        const gchar * fmt_tooltip = _("Open the real path of the folder "
+                                      "pointed by '%s'");
+
+        name = g_malloc(sizeof(gchar) * (strlen(fmt_name) + strlen(base_name + 1)));
+        tooltip = g_malloc(sizeof(gchar) * (strlen(fmt_tooltip) + strlen(base_name + 1)));
+        g_sprintf(name, fmt_name, base_name);
+        g_sprintf(tooltip, fmt_tooltip, base_name);
     }
 
     // (name, label, tip, icon)
     ret = nautilus_menu_item_new("FsymlinkExtension::follow_symlink",
                 name, tooltip, NULL);
+    g_free(name);
+    g_free(tooltip);
+
     //g_object_set_data(G_OBJECT(ret), "FsymlinkExtension::screen", screen);
     return ret;
 }

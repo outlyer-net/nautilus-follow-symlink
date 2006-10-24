@@ -2,6 +2,10 @@ Iterim milestones
 These private versions, the version numbering bumps just denote
 that a development milestone is achieved
 
+0.7.9 (24 oct 2006):
+	* Show the symbolic link's name (unresolved) in context menu and
+	  description
+
 0.7.0 (24 oct 2006):
 	* Added support for background items (context menu on opened symlinks)
 	* BUGFIX: Corrected translation typos

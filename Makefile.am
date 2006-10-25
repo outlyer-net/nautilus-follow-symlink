@@ -4,7 +4,7 @@ SUBDIRS = po src
 # This doesn't work as expected
 libdir = @libdir@/nautilus/extensions-1.0
 
-#EXTRA_DIST = dist
+EXTRA_DIST = dist po/nautilus-follow-symlink.pot
 
 # Extra files to get rid of when distcleaning
 DISTCLEANFILES = \

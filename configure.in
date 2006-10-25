@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.7.9")
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.8.0")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
@@ -28,7 +28,7 @@ AM_GLIB_GNU_GETTEXT
 dnl defines STDC_HEADERS if ANSI-compliant headers are present
 AC_HEADER_STDC
 dnl Xref: http://www.seul.org/docs/autotut/#libtool
-AC_CHECK_HEADERS(sys/stat.h,,AC_MSG_ERROR([required header file missing]))
+#AC_CHECK_HEADERS(sys/stat.h,,AC_MSG_ERROR([required header file missing]))
 
 # glib-2.0: ensure it's present
 dnl and set GLIB_CFLAGS and GLIB_LIBS

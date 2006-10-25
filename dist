@@ -16,6 +16,25 @@ gen:
 	autoheader
 	automake --add-missing --foreign
 
+help:
+	@echo "This file is used to aid in the setup of the build"
+	@echo "environment, there are the following available targets"
+	@echo "(use ./dist TARGET):"
+	@echo "    gen        (default) Create the required structure"
+	@echo "    clean      Remove the files created by gen and by the build process"
+	@echo "    update-po  Update the language files with new translation or moved "
+	@echo "               string locations (note it also updates the meta-timestamp)"
+	@echo "               so it can get funny issuing this command when using CVS/SVN"
+	@echo "    regen      'clean' then 'gen'"
+	@echo "    help       This very message"
+
+
+update-po:
+	cd po && intltool-update -p
+	cd po && for file in *.po ; do \
+		intltool-update --dist `basename $$file .po` ; \
+	done
+
 regen: clean gen
 
 clean:

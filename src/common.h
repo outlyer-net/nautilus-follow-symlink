@@ -19,8 +19,20 @@
     #include "config.h"
 #endif // HAVE_CONFIG_H
 
-#ifndef __inline__
+#if !defined(__inline)
     #define __inline
+#elif defined(_DEBUG)
+    #undef __inline
+    #define __inline
+#endif
+
+#if !defined(__fsl_unused)
+    // Xref: http://rlove.org/log/2005102601
+    #if __GNUC__ >= 3
+        #define __fsl_unused   __attribute__ ((unused))
+    #else
+        #define __fsl_unused
+    #endif
 #endif
 
 #ifdef _DEBUG
@@ -49,12 +61,14 @@
     #define FSL_LOG(str)          if (DEBUG_ON_()) g_printf("%s\n", (str));
     /* Display a formatted message with one string argument */
     #define FSL_LOG1(str1, str2)  if (DEBUG_ON_()) g_printf("%s %s\n", (str1), (str2));
+    #define FSL_LOG_SPRINTF1(s1, s2)    if (DEBUG_ON_()) g_printf((s1), (s2));
 #else
     /* Debugging facilities disabled */
     #define TRACE()
     #define FSL_LOG(a)
     #define FSL_LOG1(a,b)
     #define FSL_DEBUG_INIT()
+    #define FSL_LOG_SPRINTF1(a,b)
 #endif
 
 #endif /* FOLLOW_SYMLINK_COMMON_H */

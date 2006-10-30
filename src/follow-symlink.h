@@ -1,3 +1,27 @@
+/*
+ *  follow-symlink.h
+ *  nautilus-follow-symlink: Nautilus extension which allows opening the real
+ *                           path of symbolic links
+ *
+ *   Copyright (C) 2006 Toni Corvera
+ *
+ *   This library is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation; either
+ *   version 2.1 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, write to the Free Software
+ *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *   Author: Toni Corvera <outlyer@outlyer.net>
+ */
+
 #ifndef FOLLOW_SYMLINK_H
 #define FOLLOW_SYMLINK_H
 
@@ -37,6 +61,8 @@ static inline GList * fsl_get_items_impl(GtkWidget *,
 static NautilusMenuItem * fsl_menu_item_new(GdkScreen *, gboolean, const gchar *);
 
 static inline __pure gboolean file_is_directory(const gpointer const);
+
+static gsize printf_string_upper_bound(const gchar *, ...);
 
 /* Exported Prototypes
  * Here the namespace is a bit more explicit just in case

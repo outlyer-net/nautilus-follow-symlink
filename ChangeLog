@@ -2,6 +2,13 @@ Iterim milestones
 These private versions, the version numbering bumps just denote
 that a development milestone is achieved
 
+0.10.0:
+	* BUGFIX/INTERNAL: Try not to throw nautilus on allocation errors
+	* INTERNAL: Inherit CWD from parent nautilus
+	* INTERNAL: Adjusted allocation for printf upper_bounds
+	* INTERNAL: Display a simpler menu entry if allocation fails, won't work
+	selections
+
 0.9.0 (30 oct 2006):
 	* INTERNAL: function tagging for optimization/semantics with GCC's C
 	extensions
@@ -10,6 +17,7 @@ that a development milestone is achieved
 	* FEATURE: Display icon in the menu entry/entries
 	* INTERNAL: Debugging macros/functions cleanup
 	* FEATURE: Support for different verbosity levels on debug
+	* LEGAL: Relicensed as LGPL, added license to all source files
 
 0.8.0 (25 oct 2006):
 	* INTERNAL: Changed the use of lstat() and realpath() to GnomeVFS versions

@@ -2,11 +2,13 @@
 COMPILER NOTES
 ==============
 
-This program is meant to be built whith gcc.
+* This program is meant to be built whith gcc.
 While where possible care has been taken to not rely on GCC, the code is (and
 will remain) only tested to build with it. Additionally, future versions
 might use GCC's extension to the C syntax.
 
+* Error-on-warning is used by default, keep in mind in case some future
+gcc version gets more picky.
 
 COMPILATION
 ===========

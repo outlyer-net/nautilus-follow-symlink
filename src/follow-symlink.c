@@ -1,8 +1,28 @@
-#include "follow-symlink.h"
+/*
+ *  follow-symlink.h
+ *  nautilus-follow-symlink: Nautilus extension which allows opening the real
+ *                           path of symbolic links
+ *
+ *   Copyright (C) 2006 Toni Corvera
+ *
+ *   This library is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation; either
+ *   version 2.1 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, write to the Free Software
+ *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *   Author: Toni Corvera <outlyer@outlyer.net>
+ */
 
-// Offset at char 7 to remove file://
-//static const unsigned short URI_OFFSET = 7 * sizeof(gchar);
-static const size_t PATH_LENGTH_BYTES = sizeof(gchar) * (PATH_MAX + 1);
+#include "follow-symlink.h"
 
 extern int errno;
 
@@ -145,21 +165,32 @@ void fsl_callback (NautilusMenuItem * item __unused, NautilusFileInfo * file_inf
     const gchar const * target = gfi->symlink_name;
 
     const gchar const * BASE_CMD = "nautilus --no-desktop --no-default-window '%s'";
-    gchar * command_line = g_malloc( sizeof(gchar) * ( strlen(BASE_CMD) + strlen(target) + 1 ) );
+    const gsize mem_block_size = printf_string_upper_bound(BASE_CMD, target);
+    gchar * command_line = g_try_malloc( mem_block_size );
+
+    if (NULL == command_line) {
+        g_printerr(__FILE__ ":%d: Failed to allocate enough memory "
+                   "for command line, can't spawn new nautilus.\n", __LINE__);
+        // Redundant, but issues a CRITICAL message
+        g_return_if_fail( NULL != command_line );
+    }
+
     g_sprintf(command_line, BASE_CMD, target);
 
     if (FALSE == g_shell_parse_argv(command_line, NULL, &argv, NULL)) {
-        g_assert( FALSE );
+        g_free(command_line);
+
+        g_printerr("Failed in creating the arguments for the child nautilus.\n");
+        //g_return_if_fail( FALSE );
+        g_return_if_reached();
     }
 
     g_printf("nautilus-follow-symlink: Spawning nautilus with\n '%s'\n", command_line);
 
-    // FIXME: const gchar * cwd = nautilus_file_info_get_parent_uri(file_info) + URI_OFFSET;
-    // TODO: does the cwd used for spawn have any side-effect ?
-    g_spawn_async( ".",
+    g_spawn_async( NULL, // Inherit CWD
                    argv,
                    NULL,
-                   G_SPAWN_SEARCH_PATH,
+                   G_SPAWN_SEARCH_PATH, //| G_SPAWN_DO_NOT_REAP_CHILD,
                    NULL, NULL, NULL, NULL);
 
     g_free(command_line);
@@ -181,36 +212,51 @@ NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
 
     NautilusMenuItem *ret;
 
-    char * name;
-    char * tooltip;
+    gchar * name, * tooltip, * fmt_name, * fmt_tooltip, * unique_name;
 
     if (is_file_item) {
-        const gchar * fmt_name = _("Follow symbolic _link '%s'");
-        const gchar * fmt_tooltip = _("Open the directory pointed by the "
-                                      "symbolic link '%s'");
-
-        name = g_malloc(sizeof(gchar) * (strlen(fmt_name) + strlen(base_name)));
-        tooltip = g_malloc(sizeof(gchar) * (strlen(fmt_tooltip) + strlen(base_name)));
-        g_sprintf(name, fmt_name, base_name);
-        g_sprintf(tooltip, fmt_tooltip, base_name);
+        fmt_name = _("Follow symbolic _link '%s'");
+        fmt_tooltip = _("Open the directory pointed by the symbolic link '%s'");
     }
     else {
-        const gchar * fmt_name = _("Open real path of '%s'");
-        const gchar * fmt_tooltip = _("Open the real path of the folder "
-                                      "pointed by '%s'");
-
-        name = g_malloc(sizeof(gchar) * (strlen(fmt_name) + strlen(base_name + 1)));
-        tooltip = g_malloc(sizeof(gchar) * (strlen(fmt_tooltip) + strlen(base_name + 1)));
-        g_sprintf(name, fmt_name, base_name);
-        g_sprintf(tooltip, fmt_tooltip, base_name);
+        fmt_name = _("Open _real path of '%s'");
+        fmt_tooltip = _("Open the real path of the folder pointed by '%s'");
     }
 
     // Trial and error showed that the menu item name must be different
-    // when various are to be shown, and also that the name should always be
-    // the same for a given file
+    // when various are to be shown (multiple selections), and also that the
+    // name should always be the same for a given file, hence the base name is
+    // appended to the command name
     static const gchar * const ITEM_NAME_FMT = "FsymlinkExtension::follow_symlink_%s";
-    gchar * unique_name = g_malloc(strlen(ITEM_NAME_FMT) + strlen(base_name));
+
+    name = g_try_malloc( printf_string_upper_bound(fmt_name, base_name) );
+    tooltip = g_try_malloc( printf_string_upper_bound(fmt_tooltip, base_name) );
+    unique_name = g_try_malloc( printf_string_upper_bound(ITEM_NAME_FMT, base_name) );
+
+
+    if (NULL == name || NULL == tooltip || NULL == unique_name) {
+        // Let's try to keep nautilus going if no allocation is possible
+
+        if (name) g_free(name);
+        if (tooltip) g_free(tooltip);
+        if (unique_name) g_free(unique_name);
+
+        g_printerr(__FILE__ ":%d: Failed to allocate enough memory for "
+                   "the new menu item, dummier menu item in use.\n", __LINE__);
+
+        // Can't return NULL neither a nautilus_menu_item_new(NULL,NULL,NULL,NULL)
+        ret = nautilus_menu_item_new("Fsymlink::allocation_error",
+                                     _("Follow symbolic _link"),
+                                     _("Open the symbolic link"),
+                                     FSL_ICON);
+        g_return_val_if_fail(NULL!=name && NULL!=tooltip && NULL!=unique_name,
+                             ret);
+    }
+
+    g_sprintf(name, fmt_name, base_name);
+    g_sprintf(tooltip, fmt_tooltip, base_name);
     g_sprintf(unique_name, ITEM_NAME_FMT, base_name);
+
     // (name, label, tip, icon)
     ret = nautilus_menu_item_new(unique_name, name, tooltip, FSL_ICON);
 
@@ -220,6 +266,24 @@ NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
 
     //g_object_set_data(G_OBJECT(ret), "FsymlinkExtension::screen", screen);
     return ret;
+}
+
+/*** Utility(-es) ***/
+
+/*
+ * Wrapper for g_printf_string_upper_bound with a variadic signature
+ *
+ * Returns the maximum space needed to store the formatted string
+ */
+gsize printf_string_upper_bound(const gchar * format, ...) {
+    va_list ap;
+    va_start(ap, format);
+
+    gsize retval = g_printf_string_upper_bound(format, ap);
+
+    va_end(ap);
+
+    return retval;
 }
 
 /* vim:set ts=4 et ai: */

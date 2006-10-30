@@ -26,7 +26,9 @@ void nautilus_module_list_types(const GType **, int *);
 
 static void fsl_register_type(GTypeModule *);
 
-static GType fsl_get_type(void);
+#if 0
+static __constfn GType fsl_get_type(void);
+#endif
 
 /* Data Types */
 
@@ -42,10 +44,12 @@ typedef struct _FsymlinkExtensionClass FsymlinkExtensionClass;
 
 typedef struct _FsymlinkExtension FsymlinkExtension;
 
-/* Data initializers */
+/* Data initializers, not really needed */
+#if 0
 static void fsl_class_init (FsymlinkExtensionClass *class);
 
 static void fsl_instance_init (FsymlinkExtension *cvs);
+#endif
 
 /* Defined in the private interface */
 extern void fsl_extension_menu_provider_iface_init(NautilusMenuProviderIface *iface);

@@ -2,6 +2,15 @@ Iterim milestones
 These private versions, the version numbering bumps just denote
 that a development milestone is achieved
 
+0.9.0 (30 oct 2006):
+	* INTERNAL: function tagging for optimization/semantics with GCC's C
+	extensions
+	* INTERNAL: stricter parameter attributes
+	* INTERNAL: Use of inlined variadic functions for debugging instead of macros
+	* FEATURE: Display icon in the menu entry/entries
+	* INTERNAL: Debugging macros/functions cleanup
+	* FEATURE: Support for different verbosity levels on debug
+
 0.8.0 (25 oct 2006):
 	* INTERNAL: Changed the use of lstat() and realpath() to GnomeVFS versions
 	* BUGFIX: Resolve realpaths correctly for paths with non-ascii characters

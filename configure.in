@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.8.0")
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.9.0")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
@@ -8,9 +8,14 @@ CPPFLAGS="$CPPFLAGS -std=gnu99 -pedantic-errors -Wall"
 CFLAGS="$CFLAGS -O -Wall -Werror"
 LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
-# libtool
-AM_PROG_LIBTOOL
+# FIXME: Make this better
+FSL_ICON="/usr/share/icons/gnome/48x48/emblems/emblem-symbolic-link.png"
+AC_SUBST(FSL_ICON)
+AC_DEFINE_UNQUOTED(FSL_ICON, "$FSL_ICON", [follow-symlink menu icon])
+
+# libtool, DISABLE_STATIC should go before PROG_LIBTOOL
 AM_DISABLE_STATIC
+AM_PROG_LIBTOOL
 
 AC_PROG_INSTALL
 AC_LANG_C

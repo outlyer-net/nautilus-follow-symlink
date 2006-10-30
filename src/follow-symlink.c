@@ -33,7 +33,7 @@ GList * fsl_get_items_impl(GtkWidget * window,
         // TODO: what about GnomeVFSFileInfo's is_local ?
         gchar * uri_scheme = nautilus_file_info_get_uri_scheme(file_info);
         if (strcmp(uri_scheme, "file") != 0) {
-            FSL_LOG( "Not file scheme" );
+            FSL_LOG1( "Not file scheme" );
             return NULL;
         }
         g_free(uri_scheme);
@@ -49,7 +49,7 @@ GList * fsl_get_items_impl(GtkWidget * window,
     g_assert( (gfi->valid_fields & GNOME_VFS_FILE_INFO_FIELDS_FLAGS) > 0 );
 
     if ( (gfi->flags & GNOME_VFS_FILE_FLAGS_SYMLINK) == 0 ) {
-        FSL_LOG1("GnomeVFS Flags: ! SYMLINK: ", nautilus_file_info_get_uri(file_info));
+        FSL_LOG("GnomeVFS Flags: ! SYMLINK in %s", nautilus_file_info_get_uri(file_info));
         return NULL;
     }
 
@@ -62,20 +62,20 @@ GList * fsl_get_items_impl(GtkWidget * window,
 }
 
 GList *
-fsl_get_background_items(NautilusMenuProvider * provider,
+fsl_get_background_items(NautilusMenuProvider * provider __unused,
                          GtkWidget * window,
                          NautilusFileInfo * current_folder)
 {
     TRACE();
 
     if (NULL == current_folder) { // XXX: Does this ever happen?
-        FSL_LOG( "No folder selected" );
+        FSL_LOG1( "No folder selected");
      }
     return fsl_get_items_impl(window, current_folder, FALSE, NULL);
 }
 
 
-gboolean file_is_directory (gpointer file_data)
+gboolean file_is_directory (const gpointer const file_data)
 {
     TRACE();
 
@@ -87,45 +87,38 @@ gboolean file_is_directory (gpointer file_data)
     return gfi->type == GNOME_VFS_FILE_TYPE_DIRECTORY;
 }
 
-/* Bind to menu if needed */
-GList *
-fsl_get_file_items (NautilusMenuProvider * provider,
-                                   GtkWidget * window,
-                                   GList * files)
+/*
+ * Bind to the menu if needed
+ *
+ * 
+ */
+GList * fsl_get_file_items (NautilusMenuProvider * provider __unused,
+                            GtkWidget * window,
+                            GList * files)
 {
     TRACE();
 
     // Number of files = g_list_length(files)
     // Directory = nautilus_file_info_is_directory(files->data)
     if (NULL == files) {
-        FSL_LOG("No file selected");
+        FSL_LOG1("No file selected");
         return NULL;
     }
 
+    assert( g_list_length(files) > 0 );
 
-    if (g_list_length(files) == 1) {
-        if (!file_is_directory(files->data)) {
-            FSL_LOG("File is not a directory");
-            return NULL;
-        }
-        return fsl_get_items_impl(window, files->data, TRUE, NULL);
-    }
-
-    // More than one selected file
-    assert( g_list_length(files) > 1 );
-
-    FSL_LOG( "More than one file selected" );
+    FSL_LOG_COND( g_list_length(files) > 1, "More than one file selected (%d)", g_list_length(files) );
 
     GList * items = NULL;
 
     for (int i=0; i<g_list_length(files); ++i) {
         const gpointer file_info = g_list_nth_data(files, i);
         if (!file_is_directory(file_info)) {
-            FSL_LOG_SPRINTF1 ( "File %s is not a directory, discarded\n",
-                        nautilus_file_info_get_name(file_info) );
+            FSL_LOG ( "File %s is not a directory, discarded",
+                      nautilus_file_info_get_name(file_info) );
             continue;
         }
-        FSL_LOG_SPRINTF1( "%s is a directory\n", nautilus_file_info_get_name(file_info) );
+        FSL_LOG( "%s is a directory", nautilus_file_info_get_name(file_info) );
         // TODO: Am I loosing memory?
         GList * ret = fsl_get_items_impl(window, file_info, TRUE, items);
         if (NULL != ret) {
@@ -133,20 +126,22 @@ fsl_get_file_items (NautilusMenuProvider * provider,
         }
     }
 
-    // TODO: Although items might contain more than one item only the last one is displayed
-    // why?
-
     return items;
 }
 
-void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
+/*
+ * Opens the real path of the symbolic link
+ *
+ * file_info: The symbolic link
+ */
+void fsl_callback (NautilusMenuItem * item __unused, NautilusFileInfo * file_info)
 {
     TRACE();
 
     gchar ** argv;
     const GnomeVFSFileInfo * gfi = nautilus_file_info_get_vfs_file_info(file_info);
     // See  /usr/include/gnome-vfs-2.0/libgnomevfs/gnome-vfs-file-info.h,
-    // this one is the "realpath()" (3), also it isn0t urlencoded
+    // this one is the "realpath()" (3), also it isn't urlencoded
     const gchar const * target = gfi->symlink_name;
 
     const gchar const * BASE_CMD = "nautilus --no-desktop --no-default-window '%s'";
@@ -159,12 +154,9 @@ void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
 
     g_printf("nautilus-follow-symlink: Spawning nautilus with\n '%s'\n", command_line);
 
-    const gchar * cwd = ".";
     // FIXME: const gchar * cwd = nautilus_file_info_get_parent_uri(file_info) + URI_OFFSET;
     // TODO: does the cwd used for spawn have any side-effect ?
-    FSL_LOG_SPRINTF1 ("\tusing pwd=%s\n", cwd );
-
-    g_spawn_async( cwd,
+    g_spawn_async( ".",
                    argv,
                    NULL,
                    G_SPAWN_SEARCH_PATH,
@@ -173,9 +165,17 @@ void fsl_callback (NautilusMenuItem * item, NautilusFileInfo * file_info)
     g_free(command_line);
     g_strfreev(argv);
 }
-/* Create the new menu item */
-NautilusMenuItem *
-fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item, const gchar * base_name)
+
+/*
+ * Creates the new menu item
+ *
+ * is_file_item: TRUE if we're working over a (selected) file, FALSE if working
+ *               over a (opened) folder
+ * base_name: file name, without path, of the given file
+ */
+NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
+                                     gboolean is_file_item,
+                                     const gchar * base_name)
 {
     TRACE();
 
@@ -205,17 +205,16 @@ fsl_menu_item_new(GdkScreen *screen, gboolean is_file_item, const gchar * base_n
         g_sprintf(tooltip, fmt_tooltip, base_name);
     }
 
-    // Trial and error shows that the menu item name must be different
+    // Trial and error showed that the menu item name must be different
     // when various are to be shown, and also that the name should always be
     // the same for a given file
-    static const gchar * ITEM_NAME_FMT = "FsymlinkExtension::follow_symlink_%s";
-    // TODO: Check g_alloca() error conditions
-    gchar * unique_name = g_alloca(strlen(ITEM_NAME_FMT) + strlen(base_name)); // 10 = strlen("4294967296"));
+    static const gchar * const ITEM_NAME_FMT = "FsymlinkExtension::follow_symlink_%s";
+    gchar * unique_name = g_malloc(strlen(ITEM_NAME_FMT) + strlen(base_name));
     g_sprintf(unique_name, ITEM_NAME_FMT, base_name);
     // (name, label, tip, icon)
-    ret = nautilus_menu_item_new(//"FsymlinkExtension::follow_symlink",
-                unique_name,
-                name, tooltip, NULL);
+    ret = nautilus_menu_item_new(unique_name, name, tooltip, FSL_ICON);
+
+    g_free(unique_name);
     g_free(name);
     g_free(tooltip);
 

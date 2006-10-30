@@ -12,6 +12,10 @@
 #include <stdlib.h> /* getenv() (3) */
 #include <string.h> /* strcmp() (3) */
 
+#ifdef _DEBUG
+    #include <stdarg.h> /* va_list, va_start ... */
+#endif
+
 #include "libintl.h"
 #define _(STR) gettext(STR)
 
@@ -26,13 +30,52 @@
     #define __inline
 #endif
 
-#if !defined(__fsl_unused)
-    // Xref: http://rlove.org/log/2005102601
-    #if __GNUC__ >= 3
-        #define __fsl_unused   __attribute__ ((unused))
-    #else
-        #define __fsl_unused
-    #endif
+// Based on : http://rlove.org/log/2005102601
+#if __GNUC__ >= 3
+    #define inline          inline __attribute__((always_inline))
+    #define __pure          __attribute__((pure))
+    //#define __const       __attribute__((const)) // fails
+    #define __constfn       __attribute__((const))
+    #define __noreturn      __attribute__((noreturn))
+    #define __malloc        __attribute__((malloc))
+    #define __must_check    __attribute__((warn_unused_result))
+    #define __deprecated    __attribute__((deprecated))
+    #define __used          __attribute__((used))
+    #define __unused        __attribute__((unused))
+    #define __packed        __attribute__((packed))
+    #define likely(x)       __builtin_expect (!!(x), 1)
+    #define unlikely(x)     __builtin_expect (!!(x), 0)
+
+    /* These are mine: used to hint the compiler in variadic printf-like
+     * functions, this way it will warn if format/arguments are incorrect */
+    /* printf-like variadic arguments (format is first, args from second) */
+    #define __va_printf     __attribute__((format(printf, 1, 2)))
+    /* fprintf-like variadic arguments (format is second, args from third */
+    #define __va_fprintf    __attribute__((format(printf, 2, 3)))
+#else
+    #define inline          /* no inline */
+    #define __pure          /* no pure */
+    #define __constfn       /* no const */
+    #define __noreturn      /* no noreturn */
+    #define __malloc        /* no malloc */
+    #define __must_check    /* no warn_unused_result */
+    #define __deprecated    /* no deprecated */
+    #define __used          /* no used */
+    #define __unused        /* no unused */
+    #define __packed        /* no packed */
+    #define likely(x)       (x)
+    #define unlikely(x)     (x)
+
+    #define __va_printf
+    #define __va_fprintf
+#endif
+
+/*
+ * Uber-anal glib usage: disallow stdlib's functions where glib provides
+ * their own
+ */
+#if 0 && __GNUC__
+    #pragma GCC poison printf sprintf
 #endif
 
 #ifdef _DEBUG
@@ -40,35 +83,121 @@
 
     /* Prefix for messages */
     #define FSL_                  "nautilus-follow-symlink: "
-    /* Environment variable, set to 1 to enable verbosity */
-    #define DBGENV_               (getenv("FSL_DBG"))
-    /* Check on runtime the environment variable's value */
-    #define DEBUG_ON_()           (DBGENV_ != NULL && 0 == strcmp(DBGENV_,"1"))
 
-    /* Informational message shown on initialisation */
-    #define FSL_DEBUG_INIT()      { \
-        const int ENABLED = DEBUG_ON_(); \
-        g_print( FSL_ "DEBUG mode is available, and "); \
-        g_print( (ENABLED) ? "enabled.\n" : "disabled.\n"); \
-        g_print( FSL_ "set the environment variable FSL_DBG to \n" \
-                 FSL_ "1 to enable it or to any other value to disable it.\n"); \
+    enum {
+        FINE = 1,
+        FINER,
+
+        TRACE = FINER,
     };
 
+    /* Check on runtime the environment variable's value
+     *
+     * (set to 1 to enable verbosity, to 2 for extra verbosity)
+     */
+    static inline int VERBOSITY_LEVEL(void)
+    {
+        const char * const DBGENV = getenv("FSL_DBG");
+        if (NULL == DBGENV || 0 == strcmp(DBGENV, "0")) {
+            return 0;
+        }
+        else if (0 == strcmp(DBGENV, "2")) {
+            return 2;
+        }
+        return 1;
+    }
+
+    /* Informational message shown on initialisation */
+    static inline void FSL_DEBUG_INIT(void)
+    {
+        g_print( FSL_ "DEBUG mode is available, and ");
+        g_printf(" set to %d.\n", VERBOSITY_LEVEL());
+        g_print( FSL_ "set the environment variable FSL_DBG to \n"
+                 FSL_ "1 to enable it or to any other value to disable it.\n");
+    }
+
     /* Display the name of the current function name */
-    #define TRACE()               if (DEBUG_ON_())\
-                    g_printf("nautilus-follow-symlink trace: %s()\n", __FUNCTION__);
-    /* Display a message */
-    #define FSL_LOG(str)          if (DEBUG_ON_()) g_printf("%s\n", (str));
-    /* Display a formatted message with one string argument */
-    #define FSL_LOG1(str1, str2)  if (DEBUG_ON_()) g_printf("%s %s\n", (str1), (str2));
-    #define FSL_LOG_SPRINTF1(s1, s2)    if (DEBUG_ON_()) g_printf((s1), (s2));
+    #define TRACE() FSL_LOG_WITH_LEVEL(TRACE, FSL_ "trace: %s()", __func__);
+
+    /*
+     * Display a log message with a given log level if the level
+     * is at least VERBOSITY_LEVEL().
+     * Same as FSL_LOG_WITH_LEVEL but taking a va_list, this function
+     * provides the implementation used by the other FSL_LOG_*'s
+     */
+    static inline void __unused FSL_LOG_WITH_LEVEL_IMPL(int level,
+                                              gchar * const format,
+                                              va_list ap)
+    {
+        if (VERBOSITY_LEVEL() >= level) {
+            g_vprintf(format, ap);
+            g_print("\n");
+        }
+    }
+
+    /*
+     * Display a log message with a given log level if the level
+     * is at least VERBOSITY_LEVEL().
+     */
+    static void __unused __va_fprintf FSL_LOG_WITH_LEVEL(int level,
+                                                         gchar * const format,
+                                                         ...)
+    {
+        va_list ap;
+        va_start(ap, format);
+
+        FSL_LOG_WITH_LEVEL_IMPL(level, format, ap);
+
+        va_end(ap);
+    }
+
+    /* Display a message
+     *
+     * NOTE: Variadic functions can't be inlined
+     */
+    static void __unused __va_printf FSL_LOG(gchar * const format, ...)
+    {
+         va_list ap;
+         va_start(ap, format);
+
+         FSL_LOG_WITH_LEVEL_IMPL(FINE, format, ap);
+
+         va_end(ap);
+    }
+
+    /* Display a message if a condition is true
+     *
+     * NOTE: Variadic functions can't be inlined
+     */
+    static void __unused __va_fprintf FSL_LOG_COND(int cond, gchar * const format, ...)
+    {
+        if (cond) {
+            va_list ap;
+            va_start(ap, format);
+
+            FSL_LOG_WITH_LEVEL_IMPL(FINE, format, ap);
+
+            va_end(ap);
+        }
+    }
+
+    /* see below for an explanation */
+    #define FSL_LOG1(s) FSL_LOG(s)
 #else
     /* Debugging facilities disabled */
+    #define FINE
+    #define FINER
     #define TRACE()
-    #define FSL_LOG(a)
-    #define FSL_LOG1(a,b)
     #define FSL_DEBUG_INIT()
-    #define FSL_LOG_SPRINTF1(a,b)
+    /* With variadic functions there's no way (AFAIK) to provide empty
+     * alternative macros that won't raise a compiler error if no variable
+     * arguments are given, hence this hackish FSL_LOG1, for the cases
+     * in which just an argument is used
+     */
+    #define FSL_LOG1(s)
+    #define FSL_LOG(f, ...)
+    ///* Unneeded for the time being */ #define FSL_LOG_WITH_LEVEL(l,f,rest...)
+    #define FSL_LOG_COND(c,f,...)
 #endif
 
 #endif /* FOLLOW_SYMLINK_COMMON_H */

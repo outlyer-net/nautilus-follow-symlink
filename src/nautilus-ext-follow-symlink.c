@@ -16,7 +16,10 @@ void nautilus_module_initialize (GTypeModule  *module)
     g_printf("Initializing nautilus-follow-symlink extension (v.%s)\n", VERSION);
 
     fsl_register_type(module);
+# if 0
     provider_types[0] = fsl_get_type();
+#endif
+    provider_types[0] = fsl_type;
 }
 
 void nautilus_module_shutdown (void)
@@ -35,7 +38,7 @@ void nautilus_module_list_types (const GType **types, int *num_types)
     *num_types = G_N_ELEMENTS(provider_types);
 }
 
-void fsl_register_type (GTypeModule *module)
+void fsl_register_type (GTypeModule * module)
 {
     TRACE();
 
@@ -43,18 +46,19 @@ void fsl_register_type (GTypeModule *module)
         sizeof(FsymlinkExtensionClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) fsl_class_init,
+        //TODO: Does nullifyng this have side effects?
+        NULL, //(GClassInitFunc) fsl_class_init,
         NULL,
         NULL,
         sizeof (FsymlinkExtension),
         0,
-        (GInstanceInitFunc) fsl_instance_init,
+        NULL, //(GInstanceInitFunc) fsl_instance_init,
     };
 
     fsl_type = g_type_module_register_type (module,
-                                                           G_TYPE_OBJECT,
-                                                           "FsymlinkExtension",
-                                                           &info, 0);
+                                            G_TYPE_OBJECT,
+                                            "FsymlinkExtension",
+                                            &info, 0);
     /* Menu provider interface */
     static const GInterfaceInfo menu_provider_iface_info = {
         (GInterfaceInitFunc)fsl_extension_menu_provider_iface_init,
@@ -68,14 +72,17 @@ void fsl_register_type (GTypeModule *module)
     /* Other Interfaces */
 }
 
+#if 0
 GType fsl_get_type(void)
 {
     TRACE();
 
     return fsl_type;
 }
+#endif
 
-void fsl_instance_init(FsymlinkExtension *cvs)
+#if 0
+void fsl_instance_init(FsymlinkExtension *instance)
 {
     TRACE();
 }
@@ -84,5 +91,6 @@ void fsl_class_init(FsymlinkExtensionClass *class)
 {
     TRACE();
 }
+#endif
 
 /* vim:set ts=4 et ai: */

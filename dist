@@ -8,13 +8,32 @@ dist: gen
 # whitout it is /usr/share/libtool/m4, altough it will fail
 # on finding ltmain.sh
 
-gen:
+gen: check-gen-deps
 	libtoolize
 	intltoolize
 	aclocal -I .
 	autoconf
 	autoheader
 	automake --add-missing --foreign
+
+# This rule serves as a replacement for which for systems in which it
+# isn't installed
+# Use: ./dist which-PROGNAME or
+# a rule that depends on which-PROGNAME1, which-PROGNAME2, ...
+which-%:
+	@bash -c "type -p $*" || { \
+		echo "*** Couldn't find $*, can't continue without"\
+		     "all requirements">&2 ;\
+		false ; \
+	}
+
+check-gen-deps: \
+		which-libtoolize \
+		which-intltoolize \
+		which-aclocal \
+		which-autoconf \
+		which-autoheader \
+		which-automake
 
 help:
 	@echo "This file is used to aid in the setup of the build"

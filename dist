@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+# $Id$
+
+UPSTREAM_URL=http://proyectos.outlyer.net/nautilus-follow-symlink
 
 dist: gen
 
@@ -74,3 +77,15 @@ clean:
 	# Undo intltoolize
 	rm -f intltool*
 	rm -f po/Makefile.in.in
+
+package-source: clean
+	if [ -d .svn ]; then echo "WARNING: Using SVN working copy" >&2 && sleep 2s ; fi
+	cd ../ && tar zcvf `basename $$OLDPWD`.tar.gz \
+			--label 'nautilus-follow-symlink <$(UPSTREAM_URL)>' \
+			--totals \
+			--group 0 \
+			--owner 0 \
+			--exclude='.svn' \
+			--exclude='devel_docs' \
+			--exclude='.*' \
+			`basename $$OLDPWD`/

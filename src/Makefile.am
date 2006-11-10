@@ -1,3 +1,5 @@
+# $Id$ #
+#
 
 # Required to correctly install the locale files
 CPPFLAGS+=-DGNOMELOCALEDIR=\""$(datadir)/locale"\"

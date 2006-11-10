@@ -1,4 +1,5 @@
-/*
+/*  $Id$
+ *
  *  follow-symlink.h
  *  nautilus-follow-symlink: Nautilus extension which allows opening the real
  *                           path of symbolic links

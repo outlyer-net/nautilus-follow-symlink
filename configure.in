@@ -1,11 +1,11 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "0.10.0")
+AM_INIT_AUTOMAKE(libnautilus-follow-symlink, "1.0.0")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
 CPPFLAGS="$CPPFLAGS -std=gnu99 -pedantic-errors -Wall"
-CFLAGS="$CFLAGS -O -Wall -Werror"
+CFLAGS="$CFLAGS -O -Wall -Werror -Winline"
 LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
 # FIXME: Make this better

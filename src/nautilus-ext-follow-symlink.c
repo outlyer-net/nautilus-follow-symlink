@@ -38,7 +38,7 @@ void nautilus_module_initialize (GTypeModule  *module)
     bindtextdomain(GETTEXT_PACKAGE, GNOMELOCALEDIR);
     textdomain(GETTEXT_PACKAGE);
 
-    g_printf("Initializing nautilus-follow-symlink extension (v.%s)\n", VERSION);
+    g_printf("Initializing nautilus-follow-symlink extension (v%s)\n", VERSION);
 
     fsl_register_type(module);
 # if 0

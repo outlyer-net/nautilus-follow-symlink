@@ -1,3 +1,10 @@
+nautilus-follow-symlink (1.0.1-out.1) unstable; urgency=low
+
+  * New upstream version
+  * debian/control: Bumped Build-Depends to automake1.9
+
+ -- Toni Corvera <outlyer@outlyer.net>  Fri,  1 Dec 2006 23:40:48 +0100
+
 nautilus-follow-symlink (1.0.0-out.1) unstable; urgency=low
 
   * Initial release

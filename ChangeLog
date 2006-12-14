@@ -1,2 +1,7 @@
+1.0.1:
+	* BUGFIX: Show correctly file names with underscores
+	* BUGFIX: Fixed compilation on 64bits archs (__unused can't be defined)
+	* BUGFIX: Require automake 1.9, which was actually used
+
 1.0: Initial public release
 

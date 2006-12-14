@@ -66,7 +66,8 @@
     #define __must_check    __attribute__((warn_unused_result))
     #define __deprecated    __attribute__((deprecated))
     #define __used          __attribute__((used))
-    #define __unused        __attribute__((unused))
+    // __unused gives errors in x86_64
+    #define __UNUSED        __attribute__((unused))
     #define __packed        __attribute__((packed))
     #define likely(x)       __builtin_expect (!!(x), 1)
     #define unlikely(x)     __builtin_expect (!!(x), 0)
@@ -86,7 +87,7 @@
     #define __must_check    /* no warn_unused_result */
     #define __deprecated    /* no deprecated */
     #define __used          /* no used */
-    #define __unused        /* no unused */
+    #define __UNUSED        /* no unused */
     #define __packed        /* no packed */
     #define likely(x)       (x)
     #define unlikely(x)     (x)
@@ -150,7 +151,7 @@
      * Same as FSL_LOG_WITH_LEVEL but taking a va_list, this function
      * provides the implementation used by the other FSL_LOG_*'s
      */
-    static inline void __unused FSL_LOG_WITH_LEVEL_IMPL(int level,
+    static inline void __UNUSED FSL_LOG_WITH_LEVEL_IMPL(int level,
                                               gchar * const format,
                                               va_list ap)
     {
@@ -164,7 +165,7 @@
      * Display a log message with a given log level if the level
      * is at least VERBOSITY_LEVEL().
      */
-    static void __unused __va_fprintf FSL_LOG_WITH_LEVEL(int level,
+    static void __UNUSED __va_fprintf FSL_LOG_WITH_LEVEL(int level,
                                                          gchar * const format,
                                                          ...)
     {
@@ -180,7 +181,7 @@
      *
      * NOTE: Variadic functions can't be inlined
      */
-    static void __unused __va_printf FSL_LOG(gchar * const format, ...)
+    static void __UNUSED __va_printf FSL_LOG(gchar * const format, ...)
     {
          va_list ap;
          va_start(ap, format);
@@ -194,7 +195,7 @@
      *
      * NOTE: Variadic functions can't be inlined
      */
-    static void __unused __va_fprintf FSL_LOG_COND(int cond, gchar * const format, ...)
+    static void __UNUSED __va_fprintf FSL_LOG_COND(int cond, gchar * const format, ...)
     {
         if (cond) {
             va_list ap;

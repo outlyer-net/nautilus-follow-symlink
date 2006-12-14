@@ -36,7 +36,7 @@ check-gen-deps: \
 		which-aclocal \
 		which-autoconf \
 		which-autoheader \
-		which-automake
+		which-automake-1.9
 
 help:
 	@echo "This file is used to aid in the setup of the build"

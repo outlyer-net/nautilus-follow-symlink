@@ -83,7 +83,7 @@ GList * fsl_get_items_impl(GtkWidget * window,
 }
 
 GList *
-fsl_get_background_items(NautilusMenuProvider * provider __unused,
+fsl_get_background_items(NautilusMenuProvider * provider __UNUSED,
                          GtkWidget * window,
                          NautilusFileInfo * current_folder)
 {
@@ -113,7 +113,7 @@ gboolean file_is_directory (const gpointer const file_data)
  *
  * 
  */
-GList * fsl_get_file_items (NautilusMenuProvider * provider __unused,
+GList * fsl_get_file_items (NautilusMenuProvider * provider __UNUSED,
                             GtkWidget * window,
                             GList * files)
 {
@@ -155,7 +155,7 @@ GList * fsl_get_file_items (NautilusMenuProvider * provider __unused,
  *
  * file_info: The symbolic link
  */
-void fsl_callback (NautilusMenuItem * item __unused, NautilusFileInfo * file_info)
+void fsl_callback (NautilusMenuItem * item __UNUSED, NautilusFileInfo * file_info)
 {
     TRACE();
 
@@ -205,9 +205,9 @@ void fsl_callback (NautilusMenuItem * item __unused, NautilusFileInfo * file_inf
  *               over a (opened) folder
  * base_name: file name, without path, of the given file
  */
-NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
+NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __UNUSED,
                                      gboolean is_file_item,
-                                     const gchar * base_name)
+                                     const gchar * a_base_name)
 {
     TRACE();
 
@@ -224,6 +224,40 @@ NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
         fmt_tooltip = _("Open the real path of the folder pointed by '%s'");
     }
 
+    gchar * base_name = (gchar*)a_base_name;
+
+    // Replace any _ in the file name with __ (to display correctly in the
+    // context menu)
+    {
+        // Count them
+        size_t count = 0;
+        for (size_t i=0; i<strlen(base_name); ++i) {
+            if (*(base_name + i) == '_') {
+                ++count;
+            }
+        }
+
+        // Escape the string if needed
+        if (count > 0) {
+            gchar * escaped_name = g_malloc( (strlen(base_name) + count)*sizeof(gchar) );
+            gchar * src = base_name, * dst = escaped_name;
+
+            while (count > 0) {
+                const gchar c = *src;
+                if (c == '_') {
+                    *dst = '_';
+                    dst++;
+
+                    --count;
+                }
+                *dst = *src;
+                dst++; src++;
+            }
+            g_stpcpy(dst, src);
+            base_name = escaped_name;
+        }
+    }
+
     // Trial and error showed that the menu item name must be different
     // when various are to be shown (multiple selections), and also that the
     // name should always be the same for a given file, hence the base name is
@@ -231,8 +265,8 @@ NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
     static const gchar * const ITEM_NAME_FMT = "FsymlinkExtension::follow_symlink_%s";
 
     name = g_try_malloc( printf_string_upper_bound(fmt_name, base_name) );
-    tooltip = g_try_malloc( printf_string_upper_bound(fmt_tooltip, base_name) );
-    unique_name = g_try_malloc( printf_string_upper_bound(ITEM_NAME_FMT, base_name) );
+    tooltip = g_try_malloc( printf_string_upper_bound(fmt_tooltip, a_base_name) );
+    unique_name = g_try_malloc( printf_string_upper_bound(ITEM_NAME_FMT, a_base_name) );
 
 
     if (NULL == name || NULL == tooltip || NULL == unique_name) {
@@ -255,12 +289,15 @@ NautilusMenuItem * fsl_menu_item_new(GdkScreen *screen __unused,
     }
 
     g_sprintf(name, fmt_name, base_name);
-    g_sprintf(tooltip, fmt_tooltip, base_name);
-    g_sprintf(unique_name, ITEM_NAME_FMT, base_name);
+    g_sprintf(tooltip, fmt_tooltip, a_base_name);
+    g_sprintf(unique_name, ITEM_NAME_FMT, a_base_name);
 
     // (name, label, tip, icon)
     ret = nautilus_menu_item_new(unique_name, name, tooltip, FSL_ICON);
 
+    if (base_name != a_base_name) {
+        g_free(base_name);
+    }
     g_free(unique_name);
     g_free(name);
     g_free(tooltip);

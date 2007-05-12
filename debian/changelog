@@ -1,3 +1,9 @@
+nautilus-follow-symlink (1.0.2-out.1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Toni Corvera <outlyer@outlyer.net>  Sat, 12 May 2007 21:35:32 +0200
+
 nautilus-follow-symlink (1.0.1-out.1) unstable; urgency=low
 
   * New upstream version

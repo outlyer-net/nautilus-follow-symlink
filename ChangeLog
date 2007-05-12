@@ -1,7 +1,10 @@
-1.0.1:
+1.0.2: (2007-05-12)
+	* BUGFIX: Fixed icon location, was broken on newer systems
+
+1.0.1: (2006-12-14)
 	* BUGFIX: Show correctly file names with underscores
 	* BUGFIX: Fixed compilation on 64bits archs (__unused can't be defined)
 	* BUGFIX: Require automake 1.9, which was actually used
 
-1.0: Initial public release
+1.0: Initial public release (2006-11-10)
 

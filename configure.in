@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE([ 1.9 libnautilus-follow-symlink ], "1.0.1")
+AM_INIT_AUTOMAKE([ 1.9 libnautilus-follow-symlink ], "1.0.2")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
@@ -9,7 +9,7 @@ CFLAGS="$CFLAGS -O -Wall -Werror -Winline"
 LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
 # FIXME: Make this better
-FSL_ICON="/usr/share/icons/gnome/48x48/emblems/emblem-symbolic-link.png"
+FSL_ICON="/usr/share/icons/gnome/16x16/emblems/emblem-symbolic-link.png"
 AC_SUBST(FSL_ICON)
 AC_DEFINE_UNQUOTED(FSL_ICON, "$FSL_ICON", [follow-symlink menu icon])
 

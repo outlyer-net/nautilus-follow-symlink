@@ -1,0 +1,23 @@
+BUILD / INSTALLATION INSTRUCTIONS
+=================================
+
+First and foremost, if you use Debian or a derived distribution try first
+the upstream packages found at the project's homepage
+<http://p.outlyer.net/nautilus-follow-symlink>. Or try building a deb
+package yourself ($ dpkg-buildpackage -rfakeroot)
+
+Building
+========
+
+Run the included script "dist", this should create the missing files needed
+to prepare the configuration. If some tool required to build is missing it
+should also point it.
+
+$ ./dist
+
+The follow the usual GNU build instructions:
+
+$ ./configure --prefix=/usr/local
+$ make
+# make install
+

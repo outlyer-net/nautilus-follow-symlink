@@ -4,7 +4,7 @@
  *  nautilus-follow-symlink: Nautilus extension which allows opening the real
  *                           path of symbolic links
  *
- *   Copyright (C) 2006 Toni Corvera
+ *   Copyright (C) 2006-2008 Toni Corvera
  *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,9 @@
  * Also, includes config.h.
  */
 
+// Define NX_1_0 to use the older code, for nautilus-extension 1.0
+// It will be removed soon though
+
 #include <glib/gmessages.h> /* g_print() */
 #include <glib/gprintf.h>   /* g_printf() */
 
@@ -47,6 +50,12 @@
 #ifdef HAVE_CONFIG_H
     #include "config.h"
 #endif // HAVE_CONFIG_H
+
+// Not including this produces multiple definition errors as of 2008 (it didn't
+// at the time of the previous release)
+#ifdef HAVE_SYS_STAT_H
+	#include <sys/stat.h>
+#endif // HAVE_SYS_STAT_H
 
 #if !defined(__inline)
     #define __inline
@@ -224,7 +233,7 @@
     #define FSL_LOG(f, ...)
     ///* Unneeded for the time being */ #define FSL_LOG_WITH_LEVEL(l,f,rest...)
     #define FSL_LOG_COND(c,f,...)
-#endif
+#endif // _DEBUG
 
 #endif /* FOLLOW_SYMLINK_COMMON_H */
 /* vim:set ts=4 et ai: */

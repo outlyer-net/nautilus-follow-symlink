@@ -1,6 +1,6 @@
 
 AC_INIT(src/follow-symlink.c)
-AM_INIT_AUTOMAKE([ 1.9 libnautilus-follow-symlink ], "1.0.2")
+AM_INIT_AUTOMAKE([ 1.9 libnautilus-follow-symlink ], "1.0.99")
 AC_CONFIG_HEADER(src/config.h)
 
 dnl default FLAGS
@@ -37,7 +37,9 @@ dnl Xref: http://www.seul.org/docs/autotut/#libtool
 
 # glib-2.0: ensure it's present
 dnl and set GLIB_CFLAGS and GLIB_LIBS
-AM_PATH_GLIB_2_0
+dnl The newer API in GNOME 2.22 requires 2.16 (maybe 2.14?),
+dnl gio is the only module required (probably)
+AM_PATH_GLIB_2_0(2.16.0, [], [], gio)
 
 # pkg-config: ensure libnautilus-extension is found by pkg-config
 PKG_CHECK_MODULES(NAUTILUS_EXTENSION, [libnautilus-extension])

@@ -2,7 +2,7 @@
 SUBDIRS = po src
 
 # This doesn't work as expected
-libdir = @libdir@/nautilus/extensions-1.0
+libdir = @libdir@/nautilus/extensions-2.0
 
 EXTRA_DIST = dist po/nautilus-follow-symlink.pot
 

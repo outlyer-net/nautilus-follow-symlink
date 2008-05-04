@@ -89,3 +89,9 @@ package-source: clean
 			--exclude='devel_docs' \
 			--exclude='.*' \
 			`basename $$OLDPWD`/
+
+# Aliases
+src: package-source
+source: package-source
+tarball: package-source
+

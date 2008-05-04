@@ -4,7 +4,7 @@
  *  nautilus-follow-symlink: Nautilus extension which allows opening the real
  *                           path of symbolic links
  *
- *   Copyright (C) 2006 Toni Corvera
+ *   Copyright (C) 2006-2008 Toni Corvera
  *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,14 @@
 
 #include "follow-symlink.h"
 
+#include <gio/gio.h>
+
 extern int errno;
+
+// References for gio and the newer nautilus-extension: (required to support GNOME 2.22)
+// http://library.gnome.org/devel/gio/unstable/GFile.html
+// http://library.gnome.org/devel/gio/unstable/GFileInfo.html
+// http://library.gnome.org/devel/libnautilus-extension/unstable/libnautilus-extension-nautilus-file-info.html
 
 /* Menu initialization */
 void fsl_extension_menu_provider_iface_init(NautilusMenuProviderIface *iface)
@@ -37,7 +44,7 @@ void fsl_extension_menu_provider_iface_init(NautilusMenuProviderIface *iface)
 }
 
 /* Implementation of the menu attachment,
- * this is slightly different whith file items and with background (one folder)
+ * this is slightly different with file items and with background (one folder)
  * items, but shares most of the code, so the common part is here.
  */
 GList * fsl_get_items_impl(GtkWidget * window,
@@ -60,6 +67,27 @@ GList * fsl_get_items_impl(GtkWidget * window,
         g_free(uri_scheme);
     }
 
+
+#ifndef NX_1_0
+	// TODO: Once the older code is deprecated, some nautilus_* function can be
+	// 		 translated to their g_file_* counterparts.
+	
+	// Only process symlinks to directories, we know already the file is a
+	// direcoty or a symlink to one
+	GFile * gf = nautilus_file_info_get_location(file_info); // Get the pointed GFile
+	// FIXME: Can NULL be passed as last argument???
+	GFileInfo* gfi = g_file_query_info(gf,
+									   G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK,
+									   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, // <== Important :P
+									   NULL,
+									   NULL); // Retrieve the symlink attribute
+												
+	if (!g_file_info_get_is_symlink(gfi)) {
+		FSL_LOG("No " G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK  " attribute in %s",
+										 nautilus_file_info_get_uri(file_info));
+		return NULL;
+	}
+#else
     // We know the file is either a directory or a symlink to a directory
     // TODO: Has glib/gnome any better/faster alternatives?
     GnomeVFSFileInfo * gfi = nautilus_file_info_get_vfs_file_info(file_info);
@@ -73,7 +101,7 @@ GList * fsl_get_items_impl(GtkWidget * window,
         FSL_LOG("GnomeVFS Flags: ! SYMLINK in %s", nautilus_file_info_get_uri(file_info));
         return NULL;
     }
-
+#endif
     item = fsl_menu_item_new(gtk_widget_get_screen(window),
                              is_file_item,
                              nautilus_file_info_get_name(file_info));
@@ -99,13 +127,20 @@ fsl_get_background_items(NautilusMenuProvider * provider __UNUSED,
 gboolean file_is_directory (const gpointer const file_data)
 {
     TRACE();
-
+	
+#ifndef NX_1_0 // Nautilus extension v1.0, deprected
+	/*
+	 * The "effective" type is returned, a symlink to a directory is a directory
+	 */
+	return G_FILE_TYPE_DIRECTORY == nautilus_file_info_get_file_type(file_data);
+#else
     /*
      * Apparently type is never GNOME_VFS_FILE_TYPE_SYMBOLIC_LINK and symlinks
      * are resolved to the target type
      */
     const GnomeVFSFileInfo * const gfi = nautilus_file_info_get_vfs_file_info(file_data);
     return gfi->type == GNOME_VFS_FILE_TYPE_DIRECTORY;
+#endif
 }
 
 /*
@@ -159,6 +194,54 @@ void fsl_callback (NautilusMenuItem * item __UNUSED, NautilusFileInfo * file_inf
 {
     TRACE();
 
+#ifndef NX_1_0
+	gchar ** argv;
+	
+	GFile * gf = nautilus_file_info_get_location(file_info); // Get the pointed GFile
+	// FIXME: Can NULL be passed as last argument???
+	GFileInfo* gfi = g_file_query_info(gf,
+									   G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
+									   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, // <== Important :P
+									   NULL,
+									   NULL); // Retrieve the symlink attribute
+	
+	// The result will relative if the symlink is, must use the correct CWD
+    const char * target = g_file_info_get_symlink_target(gfi);
+	
+	GFile * parent = nautilus_file_info_get_parent_location(file_info);
+
+    const gchar const * BASE_CMD = "nautilus --no-desktop --no-default-window '%s'";
+    const gsize mem_block_size = printf_string_upper_bound(BASE_CMD, target);
+    gchar * command_line = g_try_malloc( mem_block_size );
+
+    if (NULL == command_line) {
+        g_printerr(__FILE__ ":%d: Failed to allocate enough memory "
+                   "for command line, can't spawn new nautilus.\n", __LINE__);
+        // Redundant, but issues a CRITICAL message
+        g_return_if_fail( NULL != command_line );
+    }
+
+    g_sprintf(command_line, BASE_CMD, target);
+
+    if (FALSE == g_shell_parse_argv(command_line, NULL, &argv, NULL)) {
+        g_free(command_line);
+
+        g_printerr("Failed in creating the arguments for the child nautilus.\n");
+        //g_return_if_fail( FALSE );
+        g_return_if_reached();
+    }
+
+    g_printf("nautilus-follow-symlink: Spawning nautilus with\n '%s'\n", command_line);
+
+    g_spawn_async( g_file_get_path(parent), // Inherit CWD
+                   argv,
+                   NULL,
+                   G_SPAWN_SEARCH_PATH, //| G_SPAWN_DO_NOT_REAP_CHILD,
+                   NULL, NULL, NULL, NULL);
+
+    g_free(command_line);
+    g_strfreev(argv);
+#else
     gchar ** argv;
     const GnomeVFSFileInfo * gfi = nautilus_file_info_get_vfs_file_info(file_info);
     // See  /usr/include/gnome-vfs-2.0/libgnomevfs/gnome-vfs-file-info.h,
@@ -196,6 +279,7 @@ void fsl_callback (NautilusMenuItem * item __UNUSED, NautilusFileInfo * file_inf
 
     g_free(command_line);
     g_strfreev(argv);
+#endif
 }
 
 /*

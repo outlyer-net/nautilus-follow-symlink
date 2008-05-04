@@ -1,3 +1,9 @@
+nautilus-follow-symlink (1.0.99-upstream.0-pre.1) experimental; urgency=low
+
+  * First pre-release for GNOME 2.22.
+
+ -- Toni Corvera <outlyer@gmail.com>  Sat, 03 May 2008 21:48:02 +0200
+
 nautilus-follow-symlink (1.0.2-out.1) unstable; urgency=low
 
   * New upstream release.

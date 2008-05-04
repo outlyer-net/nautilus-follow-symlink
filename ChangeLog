@@ -1,3 +1,8 @@
+1.1.0: (pre-release)
+	* Adapted to work with GNOME 2.22, support for older GNOME versions
+	  is dropped in newer releases; 1.0.2 can be used since it provides
+	  the same functionality.
+
 1.0.2: (2007-05-12)
 	* BUGFIX: Fixed icon location, was broken on newer systems
 

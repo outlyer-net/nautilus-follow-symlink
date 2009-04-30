@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libnautilus-follow-symlink\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-01 23:52+0100\n"
+"POT-Creation-Date: 2009-04-30 15:13+0200\n"
 "PO-Revision-Date: 2006-10-30 13:42+0100\n"
 "Last-Translator: Toni Corvera <outlyer@outlyer.net>\n"
 "Language-Team: Catalan <outlyer@outlyer.net>\n"
@@ -15,30 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/follow-symlink.c:219
+#: ../src/follow-symlink.c:242
 #, c-format
 msgid "Follow symbolic _link '%s'"
 msgstr "Segueix l'en_llaç simbòlic '%s'"
 
-#: ../src/follow-symlink.c:220
+#: ../src/follow-symlink.c:243
 #, c-format
 msgid "Open the directory pointed by the symbolic link '%s'"
 msgstr "Obre el directori apuntat per l'enllaç simbòlic '%s'"
 
-#: ../src/follow-symlink.c:223
+#: ../src/follow-symlink.c:246
 #, c-format
 msgid "Open _real path of '%s'"
 msgstr "Obre la _ruta real de '%s'"
 
-#: ../src/follow-symlink.c:224
+#: ../src/follow-symlink.c:247
 #, c-format
 msgid "Open the real path of the folder pointed by '%s'"
 msgstr "Obre el directori apuntat per '%s'"
 
-#: ../src/follow-symlink.c:284
+#: ../src/follow-symlink.c:307
 msgid "Follow symbolic _link"
 msgstr "Segueix l'en_llaç simbòlic"
 
-#: ../src/follow-symlink.c:285
+#: ../src/follow-symlink.c:308
 msgid "Open the symbolic link"
 msgstr "Obre l'enllaç simbòlic"

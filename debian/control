@@ -2,8 +2,9 @@ Source: nautilus-follow-symlink
 Section: contrib/gnome
 Priority: extra
 Maintainer: Toni Corvera <outlyer@gmail.com>
-Build-Depends: debhelper (>= 4.0.0), gcc, libtool, pkg-config, libc6-dev, libglib2.0-dev (>= 2.16), libnautilus-extension-dev (>= 2.21), intltool (>= 0.18), gettext, automake (>= 1.9), autoconf
+Build-Depends: debhelper (>= 4.0.0), gcc, pkg-config, libglib2.0-dev (>= 2.16), libnautilus-extension-dev (>= 2.21), intltool (>= 0.18), gettext
 Standards-Version: 3.6.2
+Homepage: http://p.outlyer.net/nautilus-follow-symlink/
 
 Package: nautilus-follow-symlink
 Architecture: any

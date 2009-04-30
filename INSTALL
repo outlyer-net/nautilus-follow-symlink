@@ -1,23 +1,29 @@
 BUILD / INSTALLATION INSTRUCTIONS
 =================================
 
-First and foremost, if you use Debian or a derived distribution try first
-the upstream packages found at the project's homepage
-<http://p.outlyer.net/nautilus-follow-symlink>. Or try building a deb
-package yourself ($ dpkg-buildpackage -rfakeroot)
+Binaries for some distributions are provided in nautilus-follow-symlink's
+homepage <http://p.outlyer.net/nautilus-follow-symlink>.
 
 Building
 ========
 
-Run the included script "dist", this should create the missing files needed
-to prepare the configuration. If some tool required to build is missing it
-should also point it.
+Follow the usual GNU build instructions:
 
-$ ./dist
-
-The follow the usual GNU build instructions:
-
-$ ./configure --prefix=/usr/local
+$ ./configure --prefix=/usr
+	(or: $ ./configure --prefix=`pkg-config --variable prefix libnautilus-extension`)
 $ make
 # make install
 
+	Note that this being a nautilus extension, the --prefix is not really used
+	at installation time as there's no flexibility on where to install them
+	(the appropiate place will be checked on install time). BUT it should match
+	gnome's locale dir.
+
+
+COMPILER NOTES
+==============
+
+* This program has only been tested with gcc
+
+* Define _DEBUG in the precompiler to enable the debugging/verbose mode.
+	CPPFLAGS="-D_DEBUG" ./configure

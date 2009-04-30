@@ -1,7 +1,7 @@
 # $Id$ #
 #
 
-# Required to correctly install the locale files
+# Required to correctly install the locale files (and to access them)
 CPPFLAGS+=-DGNOMELOCALEDIR=\""$(datadir)/locale"\"
 
 nautilus_extension_lib_LTLIBRARIES = libnautilus-follow-symlink.la
@@ -12,6 +12,7 @@ nautilus_extension_lib_LTLIBRARIES = libnautilus-follow-symlink.la
 nautilus_extension_libdir = `pkg-config --variable=extensiondir libnautilus-extension`
 
 libnautilus_follow_symlink_la_SOURCES = follow-symlink.c nautilus-ext-follow-symlink.c
+noinst_HEADERS=*.h
 
 # There's really no need to have versioned file names
 libnautilus_follow_symlink_la_LDFLAGS = -avoid-version

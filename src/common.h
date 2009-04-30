@@ -4,7 +4,7 @@
  *  nautilus-follow-symlink: Nautilus extension which allows opening the real
  *                           path of symbolic links
  *
- *   Copyright (C) 2006-2008 Toni Corvera
+ *   Copyright (C) 2006, 2008, 2009 Toni Corvera
  *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,6 @@
  * This file defines common debug utilities.
  * Also, includes config.h.
  */
-
-// Define NX_1_0 to use the older code, for nautilus-extension 1.0
-// It will be removed soon though
 
 #include <glib/gmessages.h> /* g_print() */
 #include <glib/gprintf.h>   /* g_printf() */

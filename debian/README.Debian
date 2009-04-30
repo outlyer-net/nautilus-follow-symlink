@@ -1,6 +1,12 @@
 nautilus-follow-symlink for Debian
 ----------------------------------
 
-<possible notes regarding this package - if none, delete this file>
+This is an unofficial debian package created directly from the upstream
+source, by the upstream author.
+I'm no Debian Developer so I can't guarantee a strict following of the
+Debian Policy.
 
- -- Toni Corvera <outlyer@outlyer.net>, Sat, 21 Oct 2006 23:46:12 +0200
+I use Debian Sid, when possible I try to build against packages available in
+Debian Stable but sometimes published packages will only work in Unstable.
+
+ -- Toni Corvera <outlyer@outlyer.net>, Thu, 30 Apr 2009 15:46:03 +0200

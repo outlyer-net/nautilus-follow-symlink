@@ -1,3 +1,19 @@
+nautilus-follow-symlink (1.1.0-upstream.1) unstable; urgency=low
+
+  * New release.
+  * debian/control: Drop build-depencies on autotools
+  * debian/copyright: Updated template
+  * debian/README.Debian: Notes on being unofficial+upstream
+
+ -- Toni Corvera <outlyer@gmail.com>  Thu, 30 Apr 2009 15:50:14 +0200
+
+nautilus-follow-symlink (1.0.99+pre.2-upstream.0) experimental; urgency=low
+
+  * New pre-release
+  * Corrected package pre-version number order
+
+ -- Toni Corvera <outlyer@gmail.com>  Wed, 04 Jun 2008 13:20:28 +0200
+
 nautilus-follow-symlink (1.0.99-upstream.0-pre.1) experimental; urgency=low
 
   * First pre-release for GNOME 2.22.

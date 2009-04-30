@@ -1,15 +1,31 @@
-1.1.0: (pre-release)
-	* Adapted to work with GNOME 2.22, support for older GNOME versions
-	  is dropped in newer releases; 1.0.2 can be used since it provides
-	  the same functionality.
+2009-04-30: Release 1.1.0
+    * Bugfix:
+        - Use stock icon instead of hard-wired icon location
+    * Packaging:
+        - Re-gettextized: added po/ChangeLog
+        - Deb package cleanup
+        - RPM packaging support
+        - Provide configure script by default
+    * Compatibility:
+        - Dropped support for nautilus-extension 1.0 completely
+    * Other:
+        - Reworked autoconf/automake with looser requirements
+        - Support cross-compilation
 
-1.0.2: (2007-05-12)
-	* BUGFIX: Fixed icon location, was broken on newer systems
+2008-05-04: Release 1.0.99-pre.1 (1.1.0 pre-release)
+    * Other:
+        - Adapted to work with GNOME 2.22 and above
+          For older GNOME versions, 1.0.2 should be used
+2007-05-12: Release 1.0.2
+    * Bugfix: Fixed icon location, was broken on newer systems
 
-1.0.1: (2006-12-14)
-	* BUGFIX: Show correctly file names with underscores
-	* BUGFIX: Fixed compilation on 64bits archs (__unused can't be defined)
-	* BUGFIX: Require automake 1.9, which was actually used
+2006-12-14: Release 1.0.1
+    * Bugfixes:
+        - Show correctly file names with underscores
+        - Fixed compilation on 64bits archs (__unused can't be defined)
+        - Require automake 1.9, which was actually used
 
-1.0: Initial public release (2006-11-10)
+2006-11-10: Release 1.0
+    [First public release]
 
+# vim:set ts=4 et ai: #

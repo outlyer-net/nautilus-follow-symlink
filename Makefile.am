@@ -1,22 +1,26 @@
 
 SUBDIRS = po src
 
-# This doesn't work as expected
-libdir = @libdir@/nautilus/extensions-2.0
-
-EXTRA_DIST = dist po/nautilus-follow-symlink.pot
+EXTRA_DIST = \
+		po/ChangeLog \
+		intltool-extract.in \
+		intltool-update.in \
+		intltool-merge.in \
+		@PACKAGE@.spec.in @PACKAGE@.spec \
+		debian/changelog debian/control debian/compat debian/copyright \
+		debian/dirs debian/docs debian/README.Debian debian/rules
 
 # Extra files to get rid of when distcleaning
 DISTCLEANFILES = \
 	intltool-extract \
 	intltool-merge \
 	intltool-update \
-	\
-	libtool \
-	libtool.m4 \
-	ltmain.sh \
-	ltoptions.m4 \
-	ltsugar.m4 \
-	ltversion.m4 \
-	\
-	po/Makefile.in.in
+	po/.intltool-merge-cache
+
+harshtest:
+	make
+	sudo cp src/.libs/libnautilus-follow-symlink.so /usr/lib/nautilus/extensions-2.0/
+	killall -9 nautilus
+
+#ACLOCAL_AMFLAGS = -I m4
+

@@ -1,3 +1,7 @@
+2011-04-07: Release 1.2.0-pre.1
+    * Compatibility:
+        - Refresh to build against GNOME 3, preliminary support
+
 2009-04-30: Release 1.1.0
     * Bugfix:
         - Use stock icon instead of hard-wired icon location

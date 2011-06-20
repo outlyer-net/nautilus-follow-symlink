@@ -1,6 +1,6 @@
 dnl $Id$
 
-AC_INIT(nautilus-follow-symlink, [1.1])
+AC_INIT(nautilus-follow-symlink, [1.2-pre.1])
 AC_CONFIG_SRCDIR([src/follow-symlink.c])
 
 dnl Cross-compilation
@@ -63,6 +63,8 @@ PKG_CHECK_MODULES(NAUTILUS_EXTENSION, [libnautilus-extension])
 dnl Incorporate the result of tests
 CFLAGS="$CFLAGS $GLIB_CFLAGS $NAUTILUS_EXTENSION_CFLAGS"
 LIBS="$LIBS $GLIB_LIBS $NAUTILUS_EXTENSION_LIBS"
+dnl GTK-3 migration safeguard <http://live.gnome.org/GnomeGoals/UseGseal>
+CFLAGS="$CFLAGS -DGSEAL_ENABLE"
 
 cat <<EOF
 

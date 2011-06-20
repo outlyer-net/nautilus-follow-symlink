@@ -19,8 +19,8 @@ DISTCLEANFILES = \
 
 harshtest:
 	make
-	sudo cp src/.libs/libnautilus-follow-symlink.so /usr/lib/nautilus/extensions-2.0/
-	killall -9 nautilus
+	sudo cp src/.libs/libnautilus-follow-symlink.so /usr/lib/nautilus/extensions-3.0/
+	-killall -9 nautilus
 
 #ACLOCAL_AMFLAGS = -I m4
 

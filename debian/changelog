@@ -1,3 +1,9 @@
+nautilus-follow-symlink (1.2.0+pre.1-upstream.1) unstable; urgency=low
+
+  * Preliminary support for GNOME3.
+
+ -- Toni Corvera <outlyer@gmail.com>  Thu, 07 Apr 2011 03:24:23 +0200
+
 nautilus-follow-symlink (1.1.0-upstream.1) unstable; urgency=low
 
   * New release.

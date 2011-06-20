@@ -26,7 +26,6 @@
 #include "follow-symlink.h"
 
 #include <gio/gio.h>
-#include <gtk/gtkicontheme.h>
 
 // Symbolic name of the icon, use to be in /usr/share/icons/gnome/[16x16]/emblems/
 #define FSL_ICON_NAME "emblem-symbolic-link"

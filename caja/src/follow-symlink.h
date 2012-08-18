@@ -1,0 +1,1 @@
+../../nautilus/src/follow-symlink.h

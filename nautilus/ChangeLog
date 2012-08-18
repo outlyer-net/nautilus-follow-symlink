@@ -1,0 +1,51 @@
+2012-08-18: Release 1.2.0
+    * Added compatibility with Caja
+    * Bugfix:
+        - Correctly escape resolved paths
+    * Compatibility:
+        - GNOME3 support tested
+          Builds in either GNOME2 or GNOME3 correctly
+        - Fixed weird compilation error seen on Fedora 17
+    * Packaging:
+        - Added bootstrap.sh for easy re-generation of configure scripts in
+          case the default ones are problematic
+        - RPM: Support both GNOME2 and GNOME3 installations
+    * Other:
+        - Added libtool workaround to reduce the number of libraries
+          linked against
+
+2011-04-07: Pre-Release 1.2.0-pre.1
+    * Compatibility:
+        - Refresh to build against GNOME 3, preliminary support
+
+2009-04-30: Release 1.1.0
+    * Bugfix:
+        - Use stock icon instead of hard-wired icon location
+    * Packaging:
+        - Re-gettextized: added po/ChangeLog
+        - Deb package cleanup
+        - RPM packaging support
+        - Provide configure script by default
+    * Compatibility:
+        - Dropped support for nautilus-extension 1.0 completely
+    * Other:
+        - Reworked autoconf/automake with looser requirements
+        - Support cross-compilation
+
+2008-05-04: Release 1.0.99-pre.1 (1.1.0 pre-release)
+    * Other:
+        - Adapted to work with GNOME 2.22 and above
+          For older GNOME versions, 1.0.2 should be used
+2007-05-12: Release 1.0.2
+    * Bugfix: Fixed icon location, was broken on newer systems
+
+2006-12-14: Release 1.0.1
+    * Bugfixes:
+        - Show correctly file names with underscores
+        - Fixed compilation on 64bits archs (__unused can't be defined)
+        - Require automake 1.9, which was actually used
+
+2006-11-10: Release 1.0
+    [First public release]
+
+# vim:set ts=4 et ai: #

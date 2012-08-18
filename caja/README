@@ -1,0 +1,2 @@
+Note this package is generated directly from nautilus-follow-symlink,
+ that's why it references nautilus in multiple files.

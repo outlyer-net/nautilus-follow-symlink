@@ -1,0 +1,13 @@
+libtool-honor-as-needed.patch contains a patch against ltmain.sh (generated
+   on bootstrap to make use of libtool), so that it doesn't reorder
+   "-Wl,--as-needed", a linker flag that removes unnecessary dependencies.
+   It only applies to libraries listed after it, but libtool always pushes
+   it after the libs in the command line, so it does nothing, normally.
+
+   References:
+   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=347650
+      "Debian bug #347650: libtool: Incorrect argument reordering"
+      [Source of patch]
+   http://sigquit.wordpress.com/2011/02/16/why-asneeded-doesnt-work-as-expected-for-your-libraries-on-your-autotools-project/
+      "Why --as-needed doesn't work as expected for your libraries on your autotools project"
+

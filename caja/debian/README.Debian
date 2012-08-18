@@ -1,0 +1,12 @@
+caja-follow-symlink for Debian
+------------------------------
+
+This is an unofficial debian package created directly from the upstream
+source, by the upstream author.
+I'm no Debian Developer so I can't guarantee a strict following of the
+Debian Policy.
+
+I use Debian Sid, when possible I try to build against packages available in
+Debian Stable but sometimes published packages will only work in Unstable.
+
+ -- Toni Corvera <outlyer@outlyer.gmail>, Sun, 12 Aug 2012 14:52:03 +0200

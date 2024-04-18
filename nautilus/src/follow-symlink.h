@@ -61,7 +61,7 @@ static inline GList * fsl_get_items_impl(GtkWidget *,
 
 static NautilusMenuItem * fsl_menu_item_new(GdkScreen *, gboolean, const gchar *);
 
-static inline __pure gboolean file_is_directory(const gpointer const);
+static inline __pure gboolean file_is_directory(const gpointer);
 
 static gsize printf_string_upper_bound(const gchar *, ...);
 

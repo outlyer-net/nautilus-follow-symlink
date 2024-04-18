@@ -15,11 +15,17 @@ AC_CONFIG_HEADER(src/config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
 dnl default FLAGS, if none provided (note to self: ':=' is not portable)
-if test -z "$CPPFLAGS" ; then
-	CPPFLAGS="-pedantic-errors"
-fi
+dnl if test -z "$CPPFLAGS" ; then
+dnl 	# NOTE: -pedantic will error when it encounters #warning because it
+dnl 	#       it is a GCC extension, nautilus-extension uses #warning
+dnl 	# CPPFLAGS="-pedantic-errors"
+dnl fi
 if test -z "$CFLAGS" ; then
-	CFLAGS="-Werror -Winline"
+	# NOTE: Getting warnings about granular inclusion of nautilus-extension
+	#       headers and deprecated ones, coming from nautilus-extension, not my
+	#       code
+	#CFLAGS="-Werror -Winline"
+	CFLAGS="-Winline"
 fi
 
 dnl Extra flags always set (might be overridden by user's)
@@ -30,6 +36,10 @@ dnl CPPFLAGS="$CPPFLAGS"
 CFLAGS="-I\"$PWD/src/caja-layer\" -O2 -Wall -std=gnu99 $CFLAGS"
 # -z relro -> read-only relocation ld flag
 LDFLAGS="-Wl,--as-needed -Wl,-z,relro $LDFLAGS"
+# FIXME: Getting multiple definitions for basic functions like read and getcwd,
+#        not sure where they come from
+#        --allow-multiple-definition sounds like a bad idea, though
+LDFLAGS="-Wl,--allow-multiple-definition $LDFLAGS"
 
 # libtool, DISABLE_STATIC should go before PROG_LIBTOOL
 AM_DISABLE_STATIC

@@ -149,7 +149,7 @@ fsl_get_background_items(NautilusMenuProvider * provider __UNUSED,
 }
 
 
-gboolean file_is_directory (const gpointer const file_data)
+gboolean file_is_directory (const gpointer file_data)
 {
     TRACE();
 

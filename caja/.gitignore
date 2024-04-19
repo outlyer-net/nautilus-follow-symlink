@@ -1,4 +1,5 @@
 caja-follow-symlink-*.tar.gz
+*.spec
 
 # results of patching via bootstrap.sh
 ltmain.sh.orig

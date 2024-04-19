@@ -47,7 +47,7 @@ URL:		http://p.outlyer.net./caja-follow-symlink/
 Source0:	%{url}/files/%{name}-%{version}.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:	intltool, libtool, caja-devel, gtk2-devel
+BuildRequires:	intltool, libtool, caja-devel, gtk3-devel
 Requires:	caja-extensions
 AutoReqProv: yes
 Prefix: /usr

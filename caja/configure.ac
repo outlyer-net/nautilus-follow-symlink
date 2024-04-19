@@ -1,6 +1,6 @@
 dnl $Id: configure.ac 2517 2012-08-12 02:56:55Z toni $
 
-AC_INIT(caja-follow-symlink, [1.2.0])
+AC_INIT(caja-follow-symlink, [1.2.1])
 AC_CONFIG_SRCDIR([src/follow-symlink.c])
 
 dnl Cross-compilation

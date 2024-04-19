@@ -1,6 +1,6 @@
 dnl $Id$
 
-AC_INIT(nautilus-follow-symlink, [1.2.0])
+AC_INIT(nautilus-follow-symlink, [1.2.1])
 AC_CONFIG_SRCDIR([src/follow-symlink.c])
 
 dnl Cross-compilation

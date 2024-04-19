@@ -1,3 +1,6 @@
+2024-04-19: Release 1.2.1
+    * Updated to build with newer gcc
+
 2012-08-18: Release 1.2.0
     * Added compatibility with Caja
     * Bugfix:

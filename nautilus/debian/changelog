@@ -1,3 +1,9 @@
+nautilus-follow-symlink (1.2.1-pon.1) stable; urgency=low
+
+  * New release.
+
+ -- Toni Corvera <outlyer@gmail.com>  Fri, 19 Apr 2024 20:36:30 +0200
+
 nautilus-follow-symlink (1.2.0-pon.1) unstable; urgency=low
 
   * GNOME3-ready release. Finally.

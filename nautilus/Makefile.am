@@ -7,7 +7,8 @@ EXTRA_DIST = \
 		bootstrap.sh \
 		@PACKAGE@.spec.in @PACKAGE@.spec \
 		debian/changelog debian/control debian/compat debian/copyright \
-		debian/dirs debian/docs debian/README.Debian debian/rules
+		debian/dirs debian/docs debian/README.Debian debian/rules \
+		LGPL
 
 # Extra files to get rid of when distcleaning
 DISTCLEANFILES = \

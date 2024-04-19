@@ -6,7 +6,7 @@ _nautilus-follow-symlink_ is a nautilus (GNOME Desktop) extension.
 
 _caja-follow-symlink_ is a caja (MATE Desktop) extension.
 
-They adds a menu entry on symbolic links to directories which open the pointed directory (the real path).
+They add a menu entry on symbolic links to directories which open the pointed directory (the real path).
 
 They do so both when right clicking on the folder icon or on the contents of an opened symbolic link.
 

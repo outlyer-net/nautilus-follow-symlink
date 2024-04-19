@@ -8,8 +8,6 @@ name: Package
 
 on:
   push:
-    branches:
-      - master
     # releases only
     tags:
       - '1*'

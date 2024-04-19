@@ -1,0 +1,135 @@
+---
+# See:
+#  - https://forgejo.org/docs/latest/user/actions/
+
+name: Package
+
+# FIXME: Currently build fails on the rpm/fedora job
+
+on:
+  push:
+    branches:
+      - master
+    # releases only
+    tags:
+      - '1*'
+
+env:
+  RETENTION_DAYS: 3
+
+jobs:
+  # Package tarball, we can work from there without relying on node (actions)
+  tarball:
+    runs-on: docker
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v3
+      - run: test -d caja && test -d nautilus
+      - run: apt-get -y update
+      - run: apt-get -y install --no-install-recommends intltool libcaja-extension-dev libnautilus-extension-dev
+      - run: cd caja && ./bootstrap.sh
+      - run: cd nautilus && ./bootstrap.sh
+      - run: cd caja && ./configure
+      - run: cd nautilus && ./configure
+      - run: cd caja && make dist
+      - run: cd nautilus && make dist
+      # Artifact handling via upload/download
+      # - actions: https://code.forgejo.org/actions/upload-artifact
+      #            https://code.forgejo.org/actions/download-artifact
+      # - reference example: https://code.forgejo.org/forgejo/end-to-end/src/branch/main/actions/example-artifacts/.forgejo/workflows/test.yml
+      # v4 is not supported in forgejo
+      - name: 'Upload tarball: caja'
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'caja-tarball'
+          path: 'caja/caja-follow-symlink*.tar*'
+          # If not specified will use the server-configured value (90 by default)
+          retention-days: ${{ env.RETENTION_DAYS }}
+      - name: 'Upload tarball: nautilus'
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'nautilus-tarball'
+          path: 'nautilus/nautilus-follow-symlink*.tar*'
+          retention-days: ${{ env.RETENTION_DAYS }}
+  # Leverage we're running on Debian to build and package deb
+  build-deb:
+    name: Build deb (and test-build)
+    needs: tarball
+    runs-on: docker
+    strategy:
+      matrix:
+        variant: ['caja', 'nautilus']
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ matrix.variant }}-tarball
+        # no path specified => workspace
+    # Figure out the version used in tarballs and directories
+    #- run: grep AC_INIT nautilus-*/configure.ac | sed -r 's/^.*\[(.*)].*/\1/'
+    - id: version
+      run: >
+        echo 'version='$( \
+          ls *.tar.gz \
+          | awk -F - '{print $NF}' \
+          | sed 's/.tar.gz$//' \
+          ) >> $GITHUB_OUTPUT
+    - id: dir
+      run: |
+        echo 'name=${{ matrix.variant }}-follow-symlink-${{ steps.version.outputs.version }}' >> $GITHUB_OUTPUT
+    - run: tar xvf ${{ steps.dir.outputs.name }}.tar.gz
+    - run: echo ${{ steps.dir.outputs.name }} ; ls -l ${{ steps.dir.outputs.name }}
+    - run: apt-get update
+    # Build-deps
+    - run: >
+        apt-get -y install --no-install-recommends lib${{ matrix.variant }}-extension-dev intltool debhelper devscripts build-essential
+    - run: cd '${{ steps.dir.outputs.name }}' && ./configure
+    # The deb package will compile but it may/will override flags
+    # Let the CI workflow handle that
+    #- name: Test compilation with default flags
+    #  run: cd '${{ steps.dir.outputs.name }}' && make
+    - name: Build deb package
+      run: cd '${{ steps.dir.outputs.name }}' && debuild -us -uc -b
+    - name: Upload deb artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: '${{ matrix.variant }}-deb'
+        path: '${{ matrix.variant }}-follow-symlink_*'
+        retention-days: ${{ env.RETENTION_DAYS }}
+  build-rpm:
+    name: Build rpm
+    needs: tarball
+    runs-on: docker
+    container:
+      image: 'fedora:latest'
+    strategy:
+      matrix:
+        variant: ['caja', 'nautilus']
+    steps:
+    # Can't run actions without node and git
+    - name: Prepare to run actions
+      run: dnf install -y nodejs git
+    - run: git --version && node --version
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ matrix.variant }}-tarball
+        # no path specified => workspace
+    # Figure out the version used in tarballs and directories
+    #- run: grep AC_INIT nautilus-*/configure.ac | sed -r 's/^.*\[(.*)].*/\1/'
+    - id: version
+      run: >
+        echo 'version='$( \
+          ls *.tar.gz \
+          | awk -F - '{print $NF}' \
+          | sed 's/.tar.gz$//' \
+          ) >> $GITHUB_OUTPUT
+    - id: dir
+      run: |
+        echo 'name=${{ matrix.variant }}-follow-symlink-${{ steps.version.outputs.version }}' >> $GITHUB_OUTPUT
+    - run: dnf install -y rpm-build intltool libtool ${{ matrix.variant }}-devel
+    - run: rpmbuild -tb '${{ steps.dir.outputs.name }}.tar.gz'
+    - uses: actions/upload-artifact@v3
+      with:
+        name: '${{ matrix.variant }}-rpm'
+        path: '~/rpmbuild/RPMS/*'
+        retention-days: ${{ env.RETENTION_DAYS }}

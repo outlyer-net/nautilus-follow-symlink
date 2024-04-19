@@ -1,0 +1,15 @@
+# Files produced during deb packaging
+/*.deb
+/*.ddeb
+/*.build
+/*.buildinfo
+/*.changes
+
+/*/debian/files
+/*/debian/.debhelper
+/*/debian/*-follow-symlink/
+/*/debian/*.substvars
+/*/debian/*.log
+
+build-stamp
+configure-stamp

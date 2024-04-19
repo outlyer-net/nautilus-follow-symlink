@@ -1,0 +1,26 @@
+---
+# See:
+#  - https://forgejo.org/docs/latest/user/actions/
+
+name: CI
+
+# Build on each push
+
+on: [push]
+
+env:
+  RETENTION_DAYS: 3
+
+jobs:
+  build:
+    runs-on: docker
+    # Not using a matrix to keep things simple and reuse steps in this CI
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v3
+      - run: apt-get -y update
+      - run: apt-get -y install --no-install-recommends intltool libcaja-extension-dev libnautilus-extension-dev
+      - run: test -d caja && test -d nautilus
+      - run: cd caja && ./bootstrap.sh
+      - run: cd nautilus && ./bootstrap.sh
+      - run: cd caja && ./configure && make
+      - run: cd nautilus && ./configure && make

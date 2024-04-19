@@ -1,5 +1,10 @@
 # nautilus-follow-symlink / caja-follow-symlink
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/outlyer-net/nautilus-follow-symlink/ci-build.yaml?link=https%3A%2F%2Fgithub.com%2Foutlyer-net%2Fnautilus-follow-symlink%2Factions%2Fworkflows%2Fci-build.yaml)
+![GitHub Release](https://img.shields.io/github/v/release/outlyer-net/nautilus-follow-symlink)
+![GitHub License](https://img.shields.io/github/license/outlyer-net/nautilus-follow-symlink)
+
+
 [debian-repository]: https://packages.outlyer.net/
 
 _nautilus-follow-symlink_ is a nautilus (GNOME Desktop) extension.
